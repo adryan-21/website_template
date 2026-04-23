@@ -1,0 +1,74 @@
+---
+import type { CmsLink } from '@website-template/cms-sdk';
+
+interface Props {
+  siteName: string;
+  links: CmsLink[];
+  currentPath: string;
+  cta?: CmsLink;
+}
+
+const { siteName, links, currentPath, cta } = Astro.props;
+
+const normalizePath = (href: string) => (href === '/' ? href : href.replace(/\/$/, ''));
+const current = normalizePath(currentPath);
+const brandMark = siteName
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((chunk) => chunk[0]?.toUpperCase() ?? '')
+  .join('');
+
+const shellClass =
+  'mx-auto flex max-w-7xl flex-col gap-4 border-b border-zinc-900/10 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8';
+const brandClass =
+  'inline-flex items-center gap-3 text-sm font-semibold tracking-tight text-zinc-950 no-underline';
+const brandMarkClass =
+  'inline-grid h-9 w-9 place-items-center rounded-xl border border-zinc-900/15 bg-white/70 text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-zinc-950';
+const navClass = 'flex flex-wrap gap-2 md:justify-center';
+const navLinkClass =
+  'rounded-xl border border-transparent px-3 py-2 text-sm text-zinc-600 transition hover:border-zinc-900/20 hover:bg-white/80 hover:text-zinc-950 focus-visible:border-zinc-900/30 focus-visible:bg-white focus-visible:text-zinc-950 focus-visible:outline-none';
+const navLinkActiveClass = 'border-zinc-900/20 bg-white/80 text-zinc-950';
+const ctaClass =
+  'inline-flex min-h-11 items-center justify-center rounded-xl border border-zinc-900/20 bg-white/70 px-4 py-2 text-sm font-semibold text-zinc-950 transition hover:border-zinc-900/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/10';
+---
+
+<header class={shellClass}>
+  <a class={brandClass} href="/">
+    <span class={brandMarkClass} aria-hidden="true">{brandMark}</span>
+    <span>{siteName}</span>
+  </a>
+
+  {
+    links.length > 0 && (
+      <nav class={navClass} aria-label="Main navigation">
+        {links.map((link) => {
+          const href = normalizePath(link.href);
+          const isActive = href === '/' ? current === '/' : current.startsWith(href);
+
+          return (
+            <a
+              class:list={[navLinkClass, { [navLinkActiveClass]: isActive }]}
+              href={link.href}
+              target={link.external ? '_blank' : undefined}
+              rel={link.external ? 'noreferrer' : undefined}>
+              {link.label}
+            </a>
+          );
+        })}
+      </nav>
+    )
+  }
+
+  {
+    cta?.label && cta.href && (
+      <a
+        class={ctaClass}
+        href={cta.href}
+        target={cta.external ? '_blank' : undefined}
+        rel={cta.external ? 'noreferrer' : undefined}>
+        {cta.label}
+      </a>
+    )
+  }
+</header>

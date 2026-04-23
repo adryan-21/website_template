@@ -1,0 +1,113 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCmsClient } from '@/lib/cms';
+
+const cms = getCmsClient();
+const [globalData, homepage] = await Promise.all([cms.getGlobalData(), cms.getHomepageData()]);
+const shellClass = 'mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8 lg:py-20';
+const buttonBaseClass =
+  'inline-flex min-h-11 items-center justify-center rounded-xl border px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/10';
+const resolveButtonClass = (variant?: string) => {
+  if (variant === 'secondary') {
+    return `${buttonBaseClass} border-zinc-900/20 bg-white/70 text-zinc-950 hover:border-zinc-900/30 hover:bg-white`;
+  }
+
+  if (variant === 'ghost') {
+    return `${buttonBaseClass} border-transparent bg-transparent text-zinc-700 hover:border-zinc-900/15 hover:bg-white/60 hover:text-zinc-950`;
+  }
+
+  return `${buttonBaseClass} border-zinc-950 bg-zinc-950 text-stone-50 hover:bg-zinc-800`;
+};
+---
+
+<BaseLayout
+  title={homepage.title || globalData.siteName}
+  description={homepage.subtitle || globalData.siteDescription}
+  globalData={globalData}>
+  <section class={shellClass}>
+    <div class="grid gap-5">
+      <div
+        class="space-y-6 rounded-3xl border border-zinc-900/10 bg-white/70 p-6 shadow-sm backdrop-blur-sm md:p-8 lg:p-10">
+        {
+          homepage.badge && (
+            <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+              {homepage.badge}
+            </span>
+          )
+        }
+
+        <div class="space-y-4">
+          {
+            homepage.title && (
+              <h1 class="max-w-4xl text-balance text-4xl font-semibold tracking-tight text-zinc-950 sm:text-5xl lg:text-7xl">
+                {homepage.title}
+              </h1>
+            )
+          }
+          {
+            homepage.subtitle && (
+              <p class="max-w-3xl text-base leading-8 text-zinc-600 sm:text-lg">
+                {homepage.subtitle}
+              </p>
+            )
+          }
+        </div>
+
+        {
+          ((homepage.primaryCta.label && homepage.primaryCta.href) ||
+            (homepage.secondaryCta.label && homepage.secondaryCta.href)) && (
+            <div class="flex flex-wrap gap-3">
+              {homepage.primaryCta.label && homepage.primaryCta.href && (
+                <a
+                  class={resolveButtonClass(homepage.primaryCta.variant)}
+                  href={homepage.primaryCta.href}>
+                  {homepage.primaryCta.label}
+                </a>
+              )}
+
+              {homepage.secondaryCta.label && homepage.secondaryCta.href && (
+                <a
+                  class={resolveButtonClass(homepage.secondaryCta.variant)}
+                  href={homepage.secondaryCta.href}>
+                  {homepage.secondaryCta.label}
+                </a>
+              )}
+            </div>
+          )
+        }
+      </div>
+
+      {
+        homepage.highlights.length > 0 && (
+          <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {homepage.highlights.map((item) => (
+              <article class="rounded-2xl border border-dashed border-zinc-900/15 bg-white/55 p-5 text-sm leading-7 text-zinc-700 backdrop-blur-sm">
+                <p>{item}</p>
+              </article>
+            ))}
+          </div>
+        )
+      }
+
+      {
+        homepage.featureItems.length > 0 && (
+          <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {homepage.featureItems.map((item) => (
+              <article class="space-y-3 rounded-3xl border border-zinc-900/10 bg-white/70 p-6 shadow-sm backdrop-blur-sm">
+                {(item.eyebrow || item.metric) && (
+                  <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                    {item.eyebrow || item.metric}
+                  </span>
+                )}
+                <h2 class="text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">
+                  {item.title}
+                </h2>
+                <p class="text-sm leading-7 text-zinc-600">{item.body}</p>
+              </article>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_shared_feature_items",
+  "info": {
+    "displayName": "Feature item",
+    "description": "Homepage feature or selling point."
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "body": {
+      "type": "text",
+      "required": true
+    },
+    "metric": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "kind": "singleType",
+  "collectionName": "globals",
+  "info": {
+    "singularName": "global",
+    "pluralName": "globals",
+    "displayName": "Global Settings",
+    "description": "Site-wide branding, navigation and SEO for the landing page template."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "siteName": {
+      "type": "string",
+      "required": true
+    },
+    "siteDescription": {
+      "type": "text",
+      "required": true
+    },
+    "navigationLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.link"
+    },
+    "footerLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.link"
+    },
+    "socialLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.link"
+    },
+    "primaryCta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.link"
+    },
+    "defaultSeo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

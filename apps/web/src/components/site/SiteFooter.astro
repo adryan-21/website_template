@@ -1,0 +1,74 @@
+---
+import type { CmsLink } from '@website-template/cms-sdk';
+
+interface Props {
+  siteName: string;
+  siteDescription: string;
+  footerLinks: CmsLink[];
+  socialLinks: CmsLink[];
+}
+
+const { siteName, siteDescription, footerLinks, socialLinks } = Astro.props;
+const year = new Date().getFullYear();
+
+const shellClass = 'mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8';
+const linkClass =
+  'text-sm leading-7 text-zinc-600 transition hover:text-zinc-950 focus-visible:text-zinc-950 focus-visible:outline-none';
+---
+
+<footer class="border-t border-zinc-900/10">
+  <div class={shellClass}>
+    <div class="grid gap-8 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+      <div class="space-y-3">
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">{siteName}</p>
+        {
+          siteDescription && (
+            <p class="max-w-2xl text-sm leading-7 text-zinc-600">{siteDescription}</p>
+          )
+        }
+      </div>
+
+      <div class="grid gap-6 sm:grid-cols-2">
+        {
+          footerLinks.length > 0 && (
+            <ul class="grid gap-2">
+              {footerLinks.map((link) => (
+                <li>
+                  <a
+                    class={linkClass}
+                    href={link.href}
+                    target={link.external ? '_blank' : undefined}
+                    rel={link.external ? 'noreferrer' : undefined}>
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+
+        {
+          socialLinks.length > 0 && (
+            <ul class="grid gap-2">
+              {socialLinks.map((link) => (
+                <li>
+                  <a
+                    class={linkClass}
+                    href={link.href}
+                    target={link.external ? '_blank' : undefined}
+                    rel={link.external ? 'noreferrer' : undefined}>
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-wrap gap-3 border-t border-zinc-900/10 pt-6 text-sm text-zinc-500">
+      <span>© {year} {siteName}</span>
+    </div>
+  </div>
+</footer>

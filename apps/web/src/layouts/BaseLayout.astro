@@ -1,0 +1,62 @@
+---
+import type { GlobalData } from '@website-template/cms-sdk';
+import SiteFooter from '@/components/site/SiteFooter.astro';
+import SiteHeader from '@/components/site/SiteHeader.astro';
+import '@/styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website';
+  globalData: GlobalData;
+}
+
+const { title, description, image, type = 'website', globalData } = Astro.props;
+
+const metaTitle = title
+  ? `${title} · ${globalData.siteName}`
+  : globalData.seo.metaTitle || globalData.siteName;
+const metaDescription = description || globalData.seo.metaDescription || globalData.siteDescription;
+const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : undefined;
+const openGraphImage = image ?? globalData.seo.shareImage?.url;
+---
+
+<!doctype html>
+<html lang="pl" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{metaTitle}</title>
+    <meta name="description" content={metaDescription} />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    {globalData.seo.noIndex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:title" content={metaTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:type" content={type} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    {openGraphImage && <meta property="og:image" content={openGraphImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#f4f1ea" />
+  </head>
+  <body class="min-h-screen font-sans text-zinc-950 antialiased">
+    <div class="min-h-screen">
+      <SiteHeader
+        siteName={globalData.siteName}
+        links={globalData.navigation}
+        currentPath={Astro.url.pathname}
+        cta={globalData.cta}
+      />
+      <main class="grid gap-4">
+        <slot />
+      </main>
+      <SiteFooter
+        siteName={globalData.siteName}
+        siteDescription={globalData.siteDescription}
+        footerLinks={globalData.footerLinks}
+        socialLinks={globalData.socialLinks}
+      />
+    </div>
+  </body>
+</html>

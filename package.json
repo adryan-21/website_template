@@ -1,0 +1,36 @@
+{
+  "name": "website-template",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "bun@1.3.13",
+  "workspaces": [
+    "apps/web",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n web,cms -c cyan,magenta \"bun run --cwd apps/web dev\" \"npm --prefix apps/cms run develop\"",
+    "dev:web": "bun run --cwd apps/web dev",
+    "dev:cms": "npm --prefix apps/cms run develop",
+    "install:cms": "npm --prefix apps/cms install --workspaces=false",
+    "build": "bun run build:sdk && bun run build:web && bun run build:cms",
+    "build:web": "bun run --cwd apps/web build",
+    "build:cms": "npm --prefix apps/cms run build",
+    "build:sdk": "bun run --cwd packages/cms-sdk build",
+    "typecheck": "bun run typecheck:sdk && bun run check:web",
+    "typecheck:sdk": "bun run --cwd packages/cms-sdk typecheck",
+    "check:web": "bun run --cwd apps/web check",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "bun run lint && bun run typecheck && bun run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.1",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.25.1",
+    "globals": "^16.0.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.30.1"
+  }
+}

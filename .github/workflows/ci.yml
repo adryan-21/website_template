@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/cms/package-lock.json
+
+      - name: Install root dependencies
+        run: bun install
+
+      - name: Install Strapi dependencies
+        run: npm --prefix apps/cms install --workspaces=false
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Build
+        run: bun run build

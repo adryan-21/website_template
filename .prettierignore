@@ -1,0 +1,10 @@
+node_modules/
+apps/web/.astro/
+apps/web/dist/
+apps/cms/.cache/
+apps/cms/.strapi/
+apps/cms/dist/
+apps/cms/build/
+apps/cms/public/uploads/
+bun.lock
+apps/cms/package-lock.json

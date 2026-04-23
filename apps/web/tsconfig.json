@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["astro/client"],
+    "jsx": "preserve",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@website-template/cms-sdk": ["../../packages/cms-sdk/src/index.ts"],
+      "@website-template/cms-sdk/*": ["../../packages/cms-sdk/src/*"]
+    }
+  },
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
