@@ -1,0 +1,67 @@
+---
+import type { CmsPageTestimonialsSection } from '@website-template/cms-sdk';
+import {
+  eyebrowClass,
+  sectionShellClass,
+  softSurfaceClass,
+  surfaceClass,
+} from '@website-template/ui';
+
+interface Props {
+  section: CmsPageTestimonialsSection;
+}
+
+const { section } = Astro.props;
+const gridClass =
+  section.columns === 2 ? 'grid gap-4 md:grid-cols-2' : 'grid gap-4 md:grid-cols-2 xl:grid-cols-3';
+---
+
+<section class={sectionShellClass}>
+  <div class="grid gap-5">
+    {
+      (section.eyebrow || section.title || section.description) && (
+        <div class="max-w-3xl space-y-4">
+          {section.eyebrow && <span class={eyebrowClass}>{section.eyebrow}</span>}
+          {section.title && (
+            <h2 class="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
+              {section.title}
+            </h2>
+          )}
+          {section.description && (
+            <p class="text-base leading-8 text-zinc-600">{section.description}</p>
+          )}
+        </div>
+      )
+    }
+
+    {
+      section.items.length > 0 && (
+        <div class={gridClass}>
+          {section.items.map((item) => (
+            <article class:list={[surfaceClass, 'flex h-full flex-col gap-6 p-6']}>
+              <div class="space-y-4">
+                <div
+                  class:list={[
+                    softSurfaceClass,
+                    'inline-flex px-3 py-1 text-lg font-semibold tracking-normal text-zinc-500',
+                  ]}>
+                  “ ”
+                </div>
+                <p class="text-base leading-8 text-zinc-700">“{item.quote}”</p>
+              </div>
+
+              <div class="mt-auto border-t border-zinc-900/5 pt-4">
+                <p class="text-sm font-semibold text-zinc-950">{item.author}</p>
+                {(item.role || item.company) && (
+                  <p class="text-sm leading-7 text-zinc-500">
+                    {[item.role, item.company].filter(Boolean).join(' • ')}
+                  </p>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>

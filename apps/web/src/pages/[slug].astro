@@ -1,0 +1,48 @@
+---
+import type { SiteLocale } from '@/lib/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CmsPageContent from '@/components/site/CmsPageContent.astro';
+import PageNotFound from '@/components/site/PageNotFound.astro';
+import { getCmsClient } from '@/lib/cms';
+import { isPreviewEnabled } from '@/lib/preview';
+
+export const prerender = false;
+
+const locale: SiteLocale = 'pl';
+const slug = typeof Astro.params.slug === 'string' ? Astro.params.slug.trim() : '';
+const previewMode = isPreviewEnabled(Astro.cookies);
+const cms = getCmsClient({
+  locale,
+  status: previewMode ? 'draft' : 'published',
+});
+
+const [globalData, page] = await Promise.all([
+  cms.getGlobalData(),
+  slug && slug !== 'home' ? cms.getPageBySlug(slug) : Promise.resolve(undefined),
+]);
+
+if (!page) {
+  Astro.response.status = 404;
+}
+
+const notFoundCopy = {
+  title: 'Strona nie została znaleziona',
+  description: 'Nie znaleziono wpisu `page` z takim slugiem dla bieżącego locale.',
+};
+---
+
+<BaseLayout
+  title={page?.title ?? notFoundCopy.title}
+  description={page?.seo?.metaDescription ?? page?.description ?? notFoundCopy.description}
+  image={page?.seo?.shareImage?.url}
+  seo={page?.seo}
+  previewMode={previewMode}
+  globalData={globalData}>
+  {
+    page ? (
+      <CmsPageContent page={page} locale={locale} />
+    ) : (
+      <PageNotFound locale={locale} slug={slug} />
+    )
+  }
+</BaseLayout>

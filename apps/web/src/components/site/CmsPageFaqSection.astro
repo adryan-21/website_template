@@ -1,0 +1,50 @@
+---
+import type { CmsPageFaqSection } from '@website-template/cms-sdk';
+import { eyebrowClass, sectionShellClass, surfaceClass } from '@website-template/ui';
+
+interface Props {
+  section: CmsPageFaqSection;
+}
+
+const { section } = Astro.props;
+---
+
+<section class={sectionShellClass}>
+  <div class="grid gap-5">
+    {
+      (section.eyebrow || section.title || section.description) && (
+        <div class="max-w-3xl space-y-4">
+          {section.eyebrow && <span class={eyebrowClass}>{section.eyebrow}</span>}
+          {section.title && (
+            <h2 class="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
+              {section.title}
+            </h2>
+          )}
+          {section.description && (
+            <p class="text-base leading-8 text-zinc-600">{section.description}</p>
+          )}
+        </div>
+      )
+    }
+
+    {
+      section.items.length > 0 && (
+        <div class="grid gap-4">
+          {section.items.map((item, index) => (
+            <details class:list={[surfaceClass, 'group overflow-hidden p-0']} open={index === 0}>
+              <summary class="cursor-pointer list-none px-6 py-5 text-lg font-semibold tracking-tight text-zinc-950 marker:hidden transition group-open:border-b group-open:border-zinc-900/5">
+                <span class="flex items-center justify-between gap-4">
+                  <span>{item.question}</span>
+                  <span class="text-zinc-400 transition group-open:rotate-45">+</span>
+                </span>
+              </summary>
+              <div class="px-6 pb-5 pt-0 text-sm leading-7 text-zinc-600">
+                <p class="whitespace-pre-line">{item.answer}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>

@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_sections_rich_texts",
+  "info": {
+    "displayName": "Rich text section",
+    "description": "Simple text block for the page builder."
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "body": {
+      "type": "text",
+      "required": true
+    },
+    "align": {
+      "type": "enumeration",
+      "enum": ["left", "center"],
+      "default": "left"
+    },
+    "width": {
+      "type": "enumeration",
+      "enum": ["narrow", "wide"],
+      "default": "wide"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+---
+import type { CmsPageSection } from '@website-template/cms-sdk';
+import type { SiteLocale } from '@/lib/site';
+import CmsPageCtaBandSection from '@/components/site/CmsPageCtaBandSection.astro';
+import CmsPageContactFormSection from '@/components/site/CmsPageContactFormSection.astro';
+import CmsPageFaqSection from '@/components/site/CmsPageFaqSection.astro';
+import CmsPageFeatureGridSection from '@/components/site/CmsPageFeatureGridSection.astro';
+import CmsPageRichTextSection from '@/components/site/CmsPageRichTextSection.astro';
+import CmsPageTestimonialsSection from '@/components/site/CmsPageTestimonialsSection.astro';
+
+interface Props {
+  blocks: CmsPageSection[];
+  locale: SiteLocale;
+}
+
+const { blocks, locale } = Astro.props;
+---
+
+{
+  blocks.map((block) => {
+    if (block.type === 'rich-text') {
+      return <CmsPageRichTextSection section={block} />;
+    }
+
+    if (block.type === 'feature-grid') {
+      return <CmsPageFeatureGridSection section={block} />;
+    }
+
+    if (block.type === 'testimonials') {
+      return <CmsPageTestimonialsSection section={block} />;
+    }
+
+    if (block.type === 'faq') {
+      return <CmsPageFaqSection section={block} />;
+    }
+
+    if (block.type === 'contact-form') {
+      return <CmsPageContactFormSection section={block} locale={locale} />;
+    }
+
+    return <CmsPageCtaBandSection section={block} locale={locale} />;
+  })
+}

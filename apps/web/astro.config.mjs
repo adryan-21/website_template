@@ -6,7 +6,7 @@ import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@astrojs/vue';
 
-const site = process.env.PUBLIC_SITE_URL ?? 'http://localhost:4321';
+const site = process.env.PUBLIC_SITE_URL ?? process.env.WEB_PUBLIC_SITE_URL ?? 'http://localhost:4321';
 
 // https://astro.build/config
 export default defineConfig({

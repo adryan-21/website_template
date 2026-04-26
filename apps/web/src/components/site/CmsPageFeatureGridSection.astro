@@ -1,0 +1,50 @@
+---
+import type { CmsPageFeatureGridSection } from '@website-template/cms-sdk';
+import { eyebrowClass, sectionShellClass, surfaceClass } from '@website-template/ui';
+
+interface Props {
+  section: CmsPageFeatureGridSection;
+}
+
+const { section } = Astro.props;
+const gridClass =
+  section.columns === 2 ? 'grid gap-4 md:grid-cols-2' : 'grid gap-4 md:grid-cols-2 xl:grid-cols-3';
+---
+
+<section class={sectionShellClass}>
+  <div class="grid gap-5">
+    {
+      (section.eyebrow || section.title || section.description) && (
+        <div class="max-w-3xl space-y-4">
+          {section.eyebrow && <span class={eyebrowClass}>{section.eyebrow}</span>}
+          {section.title && (
+            <h2 class="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
+              {section.title}
+            </h2>
+          )}
+          {section.description && (
+            <p class="text-base leading-8 text-zinc-600">{section.description}</p>
+          )}
+        </div>
+      )
+    }
+
+    {
+      section.items.length > 0 && (
+        <div class={gridClass}>
+          {section.items.map((item) => (
+            <article class:list={[surfaceClass, 'space-y-3 p-6']}>
+              {(item.eyebrow || item.metric) && (
+                <span class={eyebrowClass}>{item.eyebrow || item.metric}</span>
+              )}
+              <h3 class="text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">
+                {item.title}
+              </h3>
+              <p class="text-sm leading-7 text-zinc-600">{item.body}</p>
+            </article>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>

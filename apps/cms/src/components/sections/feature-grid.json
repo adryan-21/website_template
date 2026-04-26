@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_sections_feature_grids",
+  "info": {
+    "displayName": "Feature grid",
+    "description": "Grid of selling points for the page builder."
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "columns": {
+      "type": "enumeration",
+      "enum": ["2", "3"],
+      "default": "3"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.feature-item",
+      "required": true
+    }
+  }
+}

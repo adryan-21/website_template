@@ -1,6 +1,12 @@
 import type { Core } from '@strapi/strapi';
+import { envString } from './config-values';
 
-const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Middlewares => [
+const clientUrl = envString(['CLIENT_URL', 'CMS_CLIENT_URL', 'WEB_PUBLIC_SITE_URL'], 'http://localhost:4321') ??
+  'http://localhost:4321';
+const publicUrl = envString(['PUBLIC_URL', 'CMS_PUBLIC_URL', 'WEB_PUBLIC_CMS_URL'], 'http://localhost:1337') ??
+  'http://localhost:1337';
+
+const config = (): Core.Config.Middlewares => [
   'strapi::logger',
   'strapi::errors',
   {
@@ -9,8 +15,8 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Middlewar
       contentSecurityPolicy: {
         useDefaults: true,
         directives: {
-          'connect-src': ["'self'", 'https:', env('CLIENT_URL', 'http://localhost:4321')],
-          'img-src': ["'self'", 'data:', 'blob:', 'market-assets.strapi.io', env('CLIENT_URL', 'http://localhost:4321')],
+          'connect-src': ["'self'", 'https:', clientUrl],
+          'img-src': ["'self'", 'data:', 'blob:', 'market-assets.strapi.io', clientUrl],
           'media-src': ["'self'", 'data:', 'blob:'],
           upgradeInsecureRequests: null,
         },
@@ -20,7 +26,7 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Middlewar
   {
     name: 'strapi::cors',
     config: {
-      origin: [env('CLIENT_URL', 'http://localhost:4321'), env('PUBLIC_URL', 'http://localhost:1337')],
+      origin: [clientUrl, publicUrl],
       headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       credentials: true,

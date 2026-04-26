@@ -1,0 +1,243 @@
+---
+import type { CmsPageContactFormSection } from '@website-template/cms-sdk';
+import {
+  eyebrowClass,
+  resolveButtonClass,
+  sectionShellClass,
+  surfaceClass,
+} from '@website-template/ui';
+import type { SiteLocale } from '@/lib/site';
+
+interface Props {
+  section: CmsPageContactFormSection;
+  locale: SiteLocale;
+}
+
+const { section, locale } = Astro.props;
+
+const endpoint = '/api/contact.json';
+const labelClass = 'text-sm font-semibold text-zinc-950';
+const inputClass =
+  'min-h-11 rounded-2xl border border-zinc-900/10 bg-white/80 px-4 py-3 text-sm text-zinc-950 placeholder:text-zinc-400 transition focus:border-zinc-900/30 focus:outline-none focus:ring-2 focus:ring-zinc-900/10';
+const textareaClass = `${inputClass} min-h-40 resize-y`;
+const statusBaseClass = 'rounded-2xl border px-4 py-3 text-sm leading-6';
+const statusHiddenClass = `hidden ${statusBaseClass}`;
+---
+
+<section class={sectionShellClass}>
+  <div
+    class:list={[
+      surfaceClass,
+      'grid gap-6 p-6 md:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-8 lg:p-10',
+    ]}>
+    <div class="space-y-4">
+      {section.eyebrow && <span class={eyebrowClass}>{section.eyebrow}</span>}
+      {
+        section.title && (
+          <h2 class="max-w-3xl text-balance text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl lg:text-5xl">
+            {section.title}
+          </h2>
+        )
+      }
+      {section.body && <p class="max-w-2xl text-base leading-8 text-zinc-600">{section.body}</p>}
+      {
+        section.privacyNote && (
+          <p class="max-w-2xl text-sm leading-7 text-zinc-500">{section.privacyNote}</p>
+        )
+      }
+    </div>
+
+    <div class="space-y-4">
+      <form
+        class="grid gap-4 md:grid-cols-2"
+        action={endpoint}
+        method="post"
+        novalidate
+        data-contact-form
+        data-success-message={section.successMessage}
+        data-error-message={section.errorMessage}>
+        <input type="hidden" name="locale" value={locale} />
+
+        <label class="grid gap-2">
+          <span class={labelClass}>{section.nameLabel}</span>
+          <input
+            class={inputClass}
+            type="text"
+            name="name"
+            autocomplete="name"
+            minlength="2"
+            maxlength="100"
+            placeholder={section.namePlaceholder || undefined}
+            required
+          />
+        </label>
+
+        <label class="grid gap-2">
+          <span class={labelClass}>{section.emailLabel}</span>
+          <input
+            class={inputClass}
+            type="email"
+            name="email"
+            autocomplete="email"
+            maxlength="160"
+            placeholder={section.emailPlaceholder || undefined}
+            required
+          />
+        </label>
+
+        {
+          section.phoneLabel && (
+            <label class="grid gap-2">
+              <span class={labelClass}>{section.phoneLabel}</span>
+              <input
+                class={inputClass}
+                type="tel"
+                name="phone"
+                autocomplete="tel"
+                maxlength="40"
+                placeholder={section.phonePlaceholder || undefined}
+              />
+            </label>
+          )
+        }
+
+        <label class="grid gap-2">
+          <span class={labelClass}>{section.subjectLabel}</span>
+          <input
+            class={inputClass}
+            type="text"
+            name="subject"
+            minlength="3"
+            maxlength="200"
+            placeholder={section.subjectPlaceholder || undefined}
+            required
+          />
+        </label>
+
+        <label class="grid gap-2 md:col-span-2">
+          <span class={labelClass}>{section.messageLabel}</span>
+          <textarea
+            class={textareaClass}
+            name="message"
+            minlength="10"
+            maxlength="5000"
+            placeholder={section.messagePlaceholder || undefined}
+            required></textarea>
+        </label>
+
+        <div class="space-y-3 md:col-span-2">
+          <button class={resolveButtonClass('primary')} type="submit">
+            {section.submitLabel}
+          </button>
+          <p class={statusHiddenClass} aria-live="polite" data-contact-form-status></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script is:inline>
+    const hiddenClass = 'hidden rounded-2xl border px-4 py-3 text-sm leading-6';
+    const pendingClass =
+      'rounded-2xl border border-zinc-900/10 bg-white/70 px-4 py-3 text-sm leading-6 text-zinc-700';
+    const successClass =
+      'rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-6 text-emerald-900';
+    const errorClass =
+      'rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-900';
+
+    const forms = document.querySelectorAll('[data-contact-form]');
+
+    forms.forEach((formElement) => {
+      if (
+        !(formElement instanceof HTMLFormElement) ||
+        formElement.dataset.contactFormBound === 'true'
+      ) {
+        return;
+      }
+
+      formElement.dataset.contactFormBound = 'true';
+
+      const submitButton = formElement.querySelector('button[type="submit"]');
+      const statusElement = formElement.querySelector('[data-contact-form-status]');
+
+      const setStatus = (message, state = 'hidden') => {
+        if (!(statusElement instanceof HTMLElement)) {
+          return;
+        }
+
+        if (!message) {
+          statusElement.hidden = true;
+          statusElement.className = hiddenClass;
+          statusElement.textContent = '';
+          return;
+        }
+
+        statusElement.hidden = false;
+        statusElement.textContent = message;
+        statusElement.className =
+          state === 'success' ? successClass : state === 'error' ? errorClass : pendingClass;
+      };
+
+      const getTrimmedValue = (fieldName) =>
+        String(new FormData(formElement).get(fieldName) ?? '').trim();
+
+      formElement.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        if (submitButton instanceof HTMLButtonElement) {
+          submitButton.disabled = true;
+        }
+
+        setStatus('', 'hidden');
+
+        const payload = {
+          locale: getTrimmedValue('locale'),
+          name: getTrimmedValue('name'),
+          email: getTrimmedValue('email'),
+          phone: getTrimmedValue('phone') || undefined,
+          subject: getTrimmedValue('subject'),
+          message: getTrimmedValue('message'),
+        };
+
+        try {
+          setStatus('…', 'pending');
+
+          const response = await fetch(formElement.action, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+          });
+
+          let data = null;
+
+          try {
+            data = await response.json();
+          } catch {
+            data = null;
+          }
+
+          if (response.ok && data?.success) {
+            formElement.reset();
+            setStatus(formElement.dataset.successMessage || data.message || '', 'success');
+            return;
+          }
+
+          const firstFieldError = data?.errors ? Object.values(data.errors)[0] : undefined;
+
+          setStatus(
+            firstFieldError || data?.message || formElement.dataset.errorMessage || '',
+            'error',
+          );
+        } catch {
+          setStatus(formElement.dataset.errorMessage || '', 'error');
+        } finally {
+          if (submitButton instanceof HTMLButtonElement) {
+            submitButton.disabled = false;
+          }
+        }
+      });
+    });
+  </script>
+</section>

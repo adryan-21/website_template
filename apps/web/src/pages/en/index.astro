@@ -1,0 +1,24 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LandingPage from '@/components/site/LandingPage.astro';
+import { getCmsClient } from '@/lib/cms';
+import { isPreviewEnabled } from '@/lib/preview';
+
+export const prerender = false;
+
+const locale = 'en';
+const previewMode = isPreviewEnabled(Astro.cookies);
+const cms = getCmsClient({
+  locale,
+  status: previewMode ? 'draft' : 'published',
+});
+const [globalData, homepage] = await Promise.all([cms.getGlobalData(), cms.getHomepageData()]);
+---
+
+<BaseLayout
+  title={homepage.title || globalData.siteName}
+  description={homepage.subtitle || globalData.siteDescription}
+  previewMode={previewMode}
+  globalData={globalData}>
+  <LandingPage homepage={homepage} locale={locale} />
+</BaseLayout>

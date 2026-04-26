@@ -1,0 +1,99 @@
+---
+import type { HomepageData } from '@website-template/cms-sdk';
+import {
+  eyebrowClass,
+  resolveButtonClass,
+  sectionShellClass,
+  softSurfaceClass,
+  surfaceClass,
+} from '@website-template/ui';
+import { localizeHref, type SiteLocale } from '@/lib/site';
+
+interface Props {
+  homepage: HomepageData;
+  locale: SiteLocale;
+}
+
+const { homepage, locale } = Astro.props;
+
+const primaryCtaHref = homepage.primaryCta.href
+  ? localizeHref(homepage.primaryCta.href, locale)
+  : homepage.primaryCta.href;
+const secondaryCtaHref = homepage.secondaryCta.href
+  ? localizeHref(homepage.secondaryCta.href, locale)
+  : homepage.secondaryCta.href;
+---
+
+<section class={sectionShellClass}>
+  <div class="grid gap-5">
+    <div class:list={[surfaceClass, 'space-y-6 p-6 md:p-8 lg:p-10']}>
+      {homepage.badge && <span class={eyebrowClass}>{homepage.badge}</span>}
+
+      <div class="space-y-4">
+        {
+          homepage.title && (
+            <h1 class="max-w-4xl text-balance text-4xl font-semibold tracking-tight text-zinc-950 sm:text-5xl lg:text-7xl">
+              {homepage.title}
+            </h1>
+          )
+        }
+        {
+          homepage.subtitle && (
+            <p class="max-w-3xl text-base leading-8 text-zinc-600 sm:text-lg">
+              {homepage.subtitle}
+            </p>
+          )
+        }
+      </div>
+
+      {
+        ((homepage.primaryCta.label && primaryCtaHref) ||
+          (homepage.secondaryCta.label && secondaryCtaHref)) && (
+          <div class="flex flex-wrap gap-3">
+            {homepage.primaryCta.label && primaryCtaHref && (
+              <a class={resolveButtonClass(homepage.primaryCta.variant)} href={primaryCtaHref}>
+                {homepage.primaryCta.label}
+              </a>
+            )}
+
+            {homepage.secondaryCta.label && secondaryCtaHref && (
+              <a class={resolveButtonClass(homepage.secondaryCta.variant)} href={secondaryCtaHref}>
+                {homepage.secondaryCta.label}
+              </a>
+            )}
+          </div>
+        )
+      }
+    </div>
+
+    {
+      homepage.highlights.length > 0 && (
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {homepage.highlights.map((item) => (
+            <article class:list={[softSurfaceClass, 'p-5 text-sm leading-7 text-zinc-700']}>
+              <p>{item}</p>
+            </article>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      homepage.featureItems.length > 0 && (
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {homepage.featureItems.map((item) => (
+            <article class:list={[surfaceClass, 'space-y-3 p-6']}>
+              {(item.eyebrow || item.metric) && (
+                <span class={eyebrowClass}>{item.eyebrow || item.metric}</span>
+              )}
+              <h2 class="text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">
+                {item.title}
+              </h2>
+              <p class="text-sm leading-7 text-zinc-600">{item.body}</p>
+            </article>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>

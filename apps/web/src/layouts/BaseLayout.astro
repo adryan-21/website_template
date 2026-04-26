@@ -1,29 +1,65 @@
 ---
-import type { GlobalData } from '@website-template/cms-sdk';
+import type { GlobalData, SeoData } from '@website-template/cms-sdk';
 import SiteFooter from '@/components/site/SiteFooter.astro';
 import SiteHeader from '@/components/site/SiteHeader.astro';
+import { getLocaleSwitchLinks, normalizeLocale } from '@/lib/site';
 import '@/styles/global.css';
 
 interface Props {
   title?: string;
   description?: string;
   image?: string;
+  seo?: Partial<SeoData>;
   type?: 'website';
+  previewMode?: boolean;
   globalData: GlobalData;
 }
 
-const { title, description, image, type = 'website', globalData } = Astro.props;
-
-const metaTitle = title
-  ? `${title} · ${globalData.siteName}`
-  : globalData.seo.metaTitle || globalData.siteName;
-const metaDescription = description || globalData.seo.metaDescription || globalData.siteDescription;
+const {
+  title,
+  description,
+  image,
+  seo,
+  type = 'website',
+  previewMode = false,
+  globalData,
+} = Astro.props;
+const locale = normalizeLocale(globalData.locale);
+const localeSwitchLinks = getLocaleSwitchLinks(Astro.url.pathname);
 const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : undefined;
-const openGraphImage = image ?? globalData.seo.shareImage?.url;
+const alternateUrls = Astro.site
+  ? localeSwitchLinks.map((link) => ({
+      ...link,
+      absoluteUrl: new URL(link.href, Astro.site).toString(),
+    }))
+  : [];
+const xDefaultUrl = Astro.site ? new URL('/', Astro.site).toString() : undefined;
+const exitPreviewHref = `/api/exit-preview?redirect=${encodeURIComponent(Astro.url.pathname)}`;
+const previewCopy =
+  locale === 'en'
+    ? {
+        message: 'Preview mode is active — you are viewing draft content for locale',
+        action: 'Exit preview',
+      }
+    : {
+        message: 'Preview mode jest aktywny — oglądasz wersję draft dla locale',
+        action: 'Wyjdź z preview',
+      };
+
+const metaTitle =
+  seo?.metaTitle ||
+  (title ? `${title} · ${globalData.siteName}` : globalData.seo.metaTitle || globalData.siteName);
+const metaDescription =
+  seo?.metaDescription ||
+  description ||
+  globalData.seo.metaDescription ||
+  globalData.siteDescription;
+const robotsNoIndex = seo?.noIndex ?? globalData.seo.noIndex;
+const openGraphImage = seo?.shareImage?.url ?? image ?? globalData.seo.shareImage?.url;
 ---
 
 <!doctype html>
-<html lang="pl" class="h-full">
+<html lang={locale} class="h-full">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -31,7 +67,13 @@ const openGraphImage = image ?? globalData.seo.shareImage?.url;
     <title>{metaTitle}</title>
     <meta name="description" content={metaDescription} />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-    {globalData.seo.noIndex && <meta name="robots" content="noindex, nofollow" />}
+    {
+      alternateUrls.map((link) => (
+        <link rel="alternate" hreflang={link.locale} href={link.absoluteUrl} />
+      ))
+    }
+    {xDefaultUrl && <link rel="alternate" hreflang="x-default" href={xDefaultUrl} />}
+    {robotsNoIndex && <meta name="robots" content="noindex, nofollow" />}
     <meta property="og:title" content={metaTitle} />
     <meta property="og:description" content={metaDescription} />
     <meta property="og:type" content={type} />
@@ -42,7 +84,26 @@ const openGraphImage = image ?? globalData.seo.shareImage?.url;
   </head>
   <body class="min-h-screen font-sans text-zinc-950 antialiased">
     <div class="min-h-screen">
+      {
+        previewMode && (
+          <div class="border-b border-amber-200 bg-amber-50 text-amber-950">
+            <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 text-sm sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+              <p class="font-medium">
+                {previewCopy.message} <strong>{locale}</strong>.
+              </p>
+              <a
+                class="inline-flex min-h-10 items-center justify-center rounded-xl border border-amber-300 bg-white px-4 py-2 font-semibold text-amber-950 transition hover:border-amber-400 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+                href={exitPreviewHref}>
+                {previewCopy.action}
+              </a>
+            </div>
+          </div>
+        )
+      }
       <SiteHeader
+        locale={locale}
+        homeHref={locale === 'en' ? '/en' : '/'}
+        localeSwitchLinks={localeSwitchLinks}
         siteName={globalData.siteName}
         links={globalData.navigation}
         currentPath={Astro.url.pathname}
@@ -52,6 +113,7 @@ const openGraphImage = image ?? globalData.seo.shareImage?.url;
         <slot />
       </main>
       <SiteFooter
+        locale={locale}
         siteName={globalData.siteName}
         siteDescription={globalData.siteDescription}
         footerLinks={globalData.footerLinks}

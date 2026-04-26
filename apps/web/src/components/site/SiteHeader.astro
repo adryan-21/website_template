@@ -1,14 +1,25 @@
 ---
 import type { CmsLink } from '@website-template/cms-sdk';
+import {
+  buttonBaseClass,
+  localeLinkActiveClass,
+  localeLinkClass,
+  navLinkActiveClass,
+  navLinkClass,
+} from '@website-template/ui';
+import { localizeHref, type LocaleSwitchLink, type SiteLocale } from '@/lib/site';
 
 interface Props {
   siteName: string;
   links: CmsLink[];
   currentPath: string;
+  locale: SiteLocale;
+  homeHref: string;
+  localeSwitchLinks: LocaleSwitchLink[];
   cta?: CmsLink;
 }
 
-const { siteName, links, currentPath, cta } = Astro.props;
+const { siteName, links, currentPath, locale, homeHref, localeSwitchLinks, cta } = Astro.props;
 
 const normalizePath = (href: string) => (href === '/' ? href : href.replace(/\/$/, ''));
 const current = normalizePath(currentPath);
@@ -26,37 +37,47 @@ const brandClass =
 const brandMarkClass =
   'inline-grid h-9 w-9 place-items-center rounded-xl border border-zinc-900/15 bg-white/70 text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-zinc-950';
 const navClass = 'flex flex-wrap gap-2 md:justify-center';
-const navLinkClass =
-  'rounded-xl border border-transparent px-3 py-2 text-sm text-zinc-600 transition hover:border-zinc-900/20 hover:bg-white/80 hover:text-zinc-950 focus-visible:border-zinc-900/30 focus-visible:bg-white focus-visible:text-zinc-950 focus-visible:outline-none';
-const navLinkActiveClass = 'border-zinc-900/20 bg-white/80 text-zinc-950';
-const ctaClass =
-  'inline-flex min-h-11 items-center justify-center rounded-xl border border-zinc-900/20 bg-white/70 px-4 py-2 text-sm font-semibold text-zinc-950 transition hover:border-zinc-900/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/10';
+const ctaClass = `${buttonBaseClass} border-zinc-900/20 bg-white/70 text-zinc-950 hover:border-zinc-900/30 hover:bg-white`;
 ---
 
 <header class={shellClass}>
-  <a class={brandClass} href="/">
+  <a class={brandClass} href={homeHref}>
     <span class={brandMarkClass} aria-hidden="true">{brandMark}</span>
     <span>{siteName}</span>
   </a>
 
   {
     links.length > 0 && (
-      <nav class={navClass} aria-label="Main navigation">
-        {links.map((link) => {
-          const href = normalizePath(link.href);
-          const isActive = href === '/' ? current === '/' : current.startsWith(href);
+      <div class="flex flex-col gap-3 md:flex-1 md:items-center">
+        <nav class={navClass} aria-label="Main navigation">
+          {links.map((link) => {
+            const localizedHref = localizeHref(link.href, locale);
+            const href = normalizePath(localizedHref);
+            const isActive = href === '/' ? current === '/' : current.startsWith(href);
 
-          return (
+            return (
+              <a
+                class:list={[navLinkClass, { [navLinkActiveClass]: isActive }]}
+                href={localizedHref}
+                target={link.external ? '_blank' : undefined}
+                rel={link.external ? 'noreferrer' : undefined}>
+                {link.label}
+              </a>
+            );
+          })}
+        </nav>
+
+        <div class="flex flex-wrap gap-2" aria-label="Locale switcher">
+          {localeSwitchLinks.map((link) => (
             <a
-              class:list={[navLinkClass, { [navLinkActiveClass]: isActive }]}
+              class:list={[localeLinkClass, { [localeLinkActiveClass]: link.locale === locale }]}
               href={link.href}
-              target={link.external ? '_blank' : undefined}
-              rel={link.external ? 'noreferrer' : undefined}>
+              hreflang={link.locale}>
               {link.label}
             </a>
-          );
-        })}
-      </nav>
+          ))}
+        </div>
+      </div>
     )
   }
 
@@ -64,7 +85,7 @@ const ctaClass =
     cta?.label && cta.href && (
       <a
         class={ctaClass}
-        href={cta.href}
+        href={localizeHref(cta.href, locale)}
         target={cta.external ? '_blank' : undefined}
         rel={cta.external ? 'noreferrer' : undefined}>
         {cta.label}

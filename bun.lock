@@ -23,6 +23,7 @@
         "@astrojs/sitemap": "^3.6.0",
         "@astrojs/vue": "^6.0.1",
         "@website-template/cms-sdk": "workspace:*",
+        "@website-template/ui": "workspace:*",
         "astro": "^6.1.9",
         "typescript": "^6.0.3",
         "vue": "^3.5.13",
@@ -35,6 +36,10 @@
     },
     "packages/cms-sdk": {
       "name": "@website-template/cms-sdk",
+      "version": "0.1.0",
+    },
+    "packages/ui": {
+      "name": "@website-template/ui",
       "version": "0.1.0",
     },
   },
@@ -482,6 +487,8 @@
     "@vue/shared": ["@vue/shared@3.5.33", "", {}, "sha512-5vR2QIlmaLG77Ygd4pMP6+SGQ5yox9VhtnbDWTy9DzMzdmeLxZ1QqxrywEZ9sa1AVubfIJyaCG3ytyWU81ufcQ=="],
 
     "@website-template/cms-sdk": ["@website-template/cms-sdk@workspace:packages/cms-sdk"],
+
+    "@website-template/ui": ["@website-template/ui@workspace:packages/ui"],
 
     "@website-template/web": ["@website-template/web@workspace:apps/web"],
 

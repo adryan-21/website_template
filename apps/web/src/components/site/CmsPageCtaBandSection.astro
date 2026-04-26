@@ -1,0 +1,59 @@
+---
+import type { CmsPageCtaBandSection } from '@website-template/cms-sdk';
+import {
+  eyebrowClass,
+  resolveButtonClass,
+  sectionShellClass,
+  surfaceClass,
+} from '@website-template/ui';
+import { localizeHref, type SiteLocale } from '@/lib/site';
+
+interface Props {
+  section: CmsPageCtaBandSection;
+  locale: SiteLocale;
+}
+
+const { section, locale } = Astro.props;
+const primaryCtaHref = section.primaryCta.href
+  ? localizeHref(section.primaryCta.href, locale)
+  : section.primaryCta.href;
+const secondaryCtaHref = section.secondaryCta.href
+  ? localizeHref(section.secondaryCta.href, locale)
+  : section.secondaryCta.href;
+---
+
+<section class={sectionShellClass}>
+  <article class:list={[surfaceClass, 'space-y-6 p-6 md:p-8 lg:p-10']}>
+    {section.eyebrow && <span class={eyebrowClass}>{section.eyebrow}</span>}
+
+    <div class="space-y-4">
+      {
+        section.title && (
+          <h2 class="max-w-4xl text-balance text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl lg:text-5xl">
+            {section.title}
+          </h2>
+        )
+      }
+      {section.body && <p class="max-w-3xl text-base leading-8 text-zinc-600">{section.body}</p>}
+    </div>
+
+    {
+      ((section.primaryCta.label && primaryCtaHref) ||
+        (section.secondaryCta.label && secondaryCtaHref)) && (
+        <div class="flex flex-wrap gap-3">
+          {section.primaryCta.label && primaryCtaHref && (
+            <a class={resolveButtonClass(section.primaryCta.variant)} href={primaryCtaHref}>
+              {section.primaryCta.label}
+            </a>
+          )}
+
+          {section.secondaryCta.label && secondaryCtaHref && (
+            <a class={resolveButtonClass(section.secondaryCta.variant)} href={secondaryCtaHref}>
+              {section.secondaryCta.label}
+            </a>
+          )}
+        </div>
+      )
+    }
+  </article>
+</section>

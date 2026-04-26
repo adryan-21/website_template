@@ -6,7 +6,9 @@
     "paths": {
       "@/*": ["./src/*"],
       "@website-template/cms-sdk": ["../../packages/cms-sdk/src/index.ts"],
-      "@website-template/cms-sdk/*": ["../../packages/cms-sdk/src/*"]
+      "@website-template/cms-sdk/*": ["../../packages/cms-sdk/src/*"],
+      "@website-template/ui": ["../../packages/ui/src/index.ts"],
+      "@website-template/ui/*": ["../../packages/ui/src/*"]
     }
   },
   "include": [".astro/types.d.ts", "**/*"],

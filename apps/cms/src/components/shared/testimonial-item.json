@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_shared_testimonial_items",
+  "info": {
+    "displayName": "Testimonial item",
+    "description": "Quote, author, and company details for testimonial sections."
+  },
+  "options": {},
+  "attributes": {
+    "quote": {
+      "type": "text",
+      "required": true
+    },
+    "author": {
+      "type": "string",
+      "required": true
+    },
+    "role": {
+      "type": "string"
+    },
+    "company": {
+      "type": "string"
+    }
+  }
+}

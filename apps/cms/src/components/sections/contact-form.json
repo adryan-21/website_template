@@ -1,0 +1,69 @@
+{
+  "collectionName": "components_sections_contact_forms",
+  "info": {
+    "displayName": "Contact form",
+    "description": "Contact section with Astro submit flow and webhook forwarding."
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "body": {
+      "type": "text"
+    },
+    "nameLabel": {
+      "type": "string",
+      "required": true
+    },
+    "namePlaceholder": {
+      "type": "string"
+    },
+    "emailLabel": {
+      "type": "string",
+      "required": true
+    },
+    "emailPlaceholder": {
+      "type": "string"
+    },
+    "phoneLabel": {
+      "type": "string"
+    },
+    "phonePlaceholder": {
+      "type": "string"
+    },
+    "subjectLabel": {
+      "type": "string",
+      "required": true
+    },
+    "subjectPlaceholder": {
+      "type": "string"
+    },
+    "messageLabel": {
+      "type": "string",
+      "required": true
+    },
+    "messagePlaceholder": {
+      "type": "string"
+    },
+    "submitLabel": {
+      "type": "string",
+      "required": true
+    },
+    "privacyNote": {
+      "type": "text"
+    },
+    "successMessage": {
+      "type": "text",
+      "required": true
+    },
+    "errorMessage": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

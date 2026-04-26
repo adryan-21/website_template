@@ -1,0 +1,103 @@
+---
+import type { CmsPage } from '@website-template/cms-sdk';
+import CmsPageBlocks from '@/components/site/CmsPageBlocks.astro';
+import {
+  eyebrowClass,
+  resolveButtonClass,
+  sectionShellClass,
+  softSurfaceClass,
+  surfaceClass,
+} from '@website-template/ui';
+import { localizeHref, type SiteLocale } from '@/lib/site';
+
+interface Props {
+  page: CmsPage;
+  locale: SiteLocale;
+}
+
+const { page, locale } = Astro.props;
+
+const primaryCtaHref = page.primaryCta.href
+  ? localizeHref(page.primaryCta.href, locale)
+  : page.primaryCta.href;
+const secondaryCtaHref = page.secondaryCta.href
+  ? localizeHref(page.secondaryCta.href, locale)
+  : page.secondaryCta.href;
+const heroTitle = page.heroTitle || page.title;
+const heroDescription = page.heroDescription || page.description;
+const hasContentBlocks = page.contentBlocks.length > 0;
+---
+
+<section class={sectionShellClass}>
+  <div class="grid gap-5">
+    <div class:list={[surfaceClass, 'space-y-6 p-6 md:p-8 lg:p-10']}>
+      {(page.badge || page.title) && <span class={eyebrowClass}>{page.badge || page.title}</span>}
+
+      <div class="space-y-4">
+        {
+          heroTitle && (
+            <h1 class="max-w-4xl text-balance text-4xl font-semibold tracking-tight text-zinc-950 sm:text-5xl lg:text-7xl">
+              {heroTitle}
+            </h1>
+          )
+        }
+        {
+          heroDescription && (
+            <p class="max-w-3xl text-base leading-8 text-zinc-600 sm:text-lg">{heroDescription}</p>
+          )
+        }
+      </div>
+
+      {
+        ((page.primaryCta.label && primaryCtaHref) ||
+          (page.secondaryCta.label && secondaryCtaHref)) && (
+          <div class="flex flex-wrap gap-3">
+            {page.primaryCta.label && primaryCtaHref && (
+              <a class={resolveButtonClass(page.primaryCta.variant)} href={primaryCtaHref}>
+                {page.primaryCta.label}
+              </a>
+            )}
+
+            {page.secondaryCta.label && secondaryCtaHref && (
+              <a class={resolveButtonClass(page.secondaryCta.variant)} href={secondaryCtaHref}>
+                {page.secondaryCta.label}
+              </a>
+            )}
+          </div>
+        )
+      }
+    </div>
+
+    {hasContentBlocks && <CmsPageBlocks blocks={page.contentBlocks} locale={locale} />}
+
+    {
+      !hasContentBlocks && page.highlights.length > 0 && (
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {page.highlights.map((item) => (
+            <article class:list={[softSurfaceClass, 'p-5 text-sm leading-7 text-zinc-700']}>
+              <p>{item}</p>
+            </article>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      !hasContentBlocks && page.featureItems.length > 0 && (
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {page.featureItems.map((item) => (
+            <article class:list={[surfaceClass, 'space-y-3 p-6']}>
+              {(item.eyebrow || item.metric) && (
+                <span class={eyebrowClass}>{item.eyebrow || item.metric}</span>
+              )}
+              <h2 class="text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">
+                {item.title}
+              </h2>
+              <p class="text-sm leading-7 text-zinc-600">{item.body}</p>
+            </article>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>

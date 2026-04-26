@@ -1,0 +1,74 @@
+---
+import {
+  resolveButtonClass,
+  sectionShellClass,
+  softSurfaceClass,
+  surfaceClass,
+} from '@website-template/ui';
+import { buildPagePath, type SiteLocale } from '@/lib/site';
+
+interface Props {
+  locale: SiteLocale;
+  slug: string;
+}
+
+const { locale, slug } = Astro.props;
+
+const homeHref = buildPagePath(locale);
+const requestedPath = locale === 'en' ? `/en/${slug}` : `/${slug}`;
+const copy =
+  locale === 'en'
+    ? {
+        eyebrow: '404 · CMS page',
+        title: 'This page could not be found.',
+        description:
+          'The route exists, but there is no published or previewable `page` entry with this localized slug in the CMS.',
+        primaryAction: 'Back to home',
+        secondaryAction: 'Check CMS status',
+        note: 'Requested path',
+      }
+    : {
+        eyebrow: '404 · strona CMS',
+        title: 'Nie udało się znaleźć tej strony.',
+        description:
+          'Route istnieje, ale w CMS nie ma opublikowanego ani previewowalnego wpisu `page` z takim lokalizowanym slugiem.',
+        primaryAction: 'Wróć na start',
+        secondaryAction: 'Sprawdź status CMS',
+        note: 'Żądana ścieżka',
+      };
+---
+
+<section class={sectionShellClass}>
+  <div class="grid gap-5">
+    <div class:list={[surfaceClass, 'space-y-6 p-6 md:p-8 lg:p-10']}>
+      <span
+        class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+        {copy.eyebrow}
+      </span>
+
+      <div class="space-y-4">
+        <h1
+          class="max-w-4xl text-balance text-4xl font-semibold tracking-tight text-zinc-950 sm:text-5xl lg:text-6xl">
+          {copy.title}
+        </h1>
+        <p class="max-w-3xl text-base leading-8 text-zinc-600 sm:text-lg">{copy.description}</p>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <a class={resolveButtonClass('primary')} href={homeHref}>
+          {copy.primaryAction}
+        </a>
+        <a class={resolveButtonClass('secondary')} href="/api/cms-status.json">
+          {copy.secondaryAction}
+        </a>
+      </div>
+    </div>
+
+    <article class:list={[softSurfaceClass, 'p-5 text-sm leading-7 text-zinc-700']}>
+      <p>
+        <strong>{copy.note}:</strong>{' '}
+        <code class="rounded bg-white/80 px-2 py-1 text-xs text-zinc-900">{requestedPath}</code>
+      </p>
+    </article>
+  </div>
+</section>

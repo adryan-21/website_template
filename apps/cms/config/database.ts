@@ -1,51 +1,70 @@
 import path from 'path';
 import type { Core } from '@strapi/strapi';
+import { envBool, envInt, envString } from './config-values';
 
-const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Database => {
-  const client = env('DATABASE_CLIENT', 'postgres');
+const config = (): Core.Config.Database => {
+  const client = envString(['DATABASE_CLIENT', 'CMS_DATABASE_CLIENT'], 'postgres') ?? 'postgres';
 
   const connections = {
     mysql: {
       connection: {
-        host: env('DATABASE_HOST', 'localhost'),
-        port: env.int('DATABASE_PORT', 3306),
-        database: env('DATABASE_NAME', 'strapi'),
-        user: env('DATABASE_USERNAME', 'strapi'),
-        password: env('DATABASE_PASSWORD', 'strapi'),
-        ssl: env.bool('DATABASE_SSL', false) && {
-          key: env('DATABASE_SSL_KEY', undefined),
-          cert: env('DATABASE_SSL_CERT', undefined),
-          ca: env('DATABASE_SSL_CA', undefined),
-          capath: env('DATABASE_SSL_CAPATH', undefined),
-          cipher: env('DATABASE_SSL_CIPHER', undefined),
-          rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
+        host: envString(['DATABASE_HOST', 'CMS_DATABASE_HOST'], 'localhost') ?? 'localhost',
+        port: envInt(['DATABASE_PORT', 'CMS_DATABASE_PORT'], 3306),
+        database: envString(['DATABASE_NAME', 'CMS_DATABASE_NAME'], 'strapi') ?? 'strapi',
+        user: envString(['DATABASE_USERNAME', 'CMS_DATABASE_USERNAME'], 'strapi') ?? 'strapi',
+        password: envString(['DATABASE_PASSWORD', 'CMS_DATABASE_PASSWORD'], 'strapi') ?? 'strapi',
+        ssl: envBool(['DATABASE_SSL', 'CMS_DATABASE_SSL'], false) && {
+          key: envString(['DATABASE_SSL_KEY', 'CMS_DATABASE_SSL_KEY']),
+          cert: envString(['DATABASE_SSL_CERT', 'CMS_DATABASE_SSL_CERT']),
+          ca: envString(['DATABASE_SSL_CA', 'CMS_DATABASE_SSL_CA']),
+          capath: envString(['DATABASE_SSL_CAPATH', 'CMS_DATABASE_SSL_CAPATH']),
+          cipher: envString(['DATABASE_SSL_CIPHER', 'CMS_DATABASE_SSL_CIPHER']),
+          rejectUnauthorized: envBool(
+            ['DATABASE_SSL_REJECT_UNAUTHORIZED', 'CMS_DATABASE_SSL_REJECT_UNAUTHORIZED'],
+            true,
+          ),
         },
       },
-      pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },
+      pool: {
+        min: envInt(['DATABASE_POOL_MIN', 'CMS_DATABASE_POOL_MIN'], 2),
+        max: envInt(['DATABASE_POOL_MAX', 'CMS_DATABASE_POOL_MAX'], 10),
+      },
     },
     postgres: {
       connection: {
-        connectionString: env('DATABASE_URL'),
-        host: env('DATABASE_HOST', '127.0.0.1'),
-        port: env.int('DATABASE_PORT', 5432),
-        database: env('DATABASE_NAME', 'website_template'),
-        user: env('DATABASE_USERNAME', 'strapi'),
-        password: env('DATABASE_PASSWORD', 'strapi'),
-        ssl: env.bool('DATABASE_SSL', false) && {
-          key: env('DATABASE_SSL_KEY', undefined),
-          cert: env('DATABASE_SSL_CERT', undefined),
-          ca: env('DATABASE_SSL_CA', undefined),
-          capath: env('DATABASE_SSL_CAPATH', undefined),
-          cipher: env('DATABASE_SSL_CIPHER', undefined),
-          rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
+        connectionString: envString(['DATABASE_URL', 'CMS_DATABASE_URL']),
+        host: envString(['DATABASE_HOST', 'CMS_DATABASE_HOST'], '127.0.0.1') ?? '127.0.0.1',
+        port: envInt(['DATABASE_PORT', 'CMS_DATABASE_PORT'], 5432),
+        database: envString(['DATABASE_NAME', 'CMS_DATABASE_NAME'], 'website_template') ?? 'website_template',
+        user: envString(['DATABASE_USERNAME', 'CMS_DATABASE_USERNAME'], 'strapi') ?? 'strapi',
+        password: envString(['DATABASE_PASSWORD', 'CMS_DATABASE_PASSWORD'], 'strapi') ?? 'strapi',
+        ssl: envBool(['DATABASE_SSL', 'CMS_DATABASE_SSL'], false) && {
+          key: envString(['DATABASE_SSL_KEY', 'CMS_DATABASE_SSL_KEY']),
+          cert: envString(['DATABASE_SSL_CERT', 'CMS_DATABASE_SSL_CERT']),
+          ca: envString(['DATABASE_SSL_CA', 'CMS_DATABASE_SSL_CA']),
+          capath: envString(['DATABASE_SSL_CAPATH', 'CMS_DATABASE_SSL_CAPATH']),
+          cipher: envString(['DATABASE_SSL_CIPHER', 'CMS_DATABASE_SSL_CIPHER']),
+          rejectUnauthorized: envBool(
+            ['DATABASE_SSL_REJECT_UNAUTHORIZED', 'CMS_DATABASE_SSL_REJECT_UNAUTHORIZED'],
+            true,
+          ),
         },
-        schema: env('DATABASE_SCHEMA', 'public'),
+        schema: envString(['DATABASE_SCHEMA', 'CMS_DATABASE_SCHEMA'], 'public') ?? 'public',
       },
-      pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },
+      pool: {
+        min: envInt(['DATABASE_POOL_MIN', 'CMS_DATABASE_POOL_MIN'], 2),
+        max: envInt(['DATABASE_POOL_MAX', 'CMS_DATABASE_POOL_MAX'], 10),
+      },
     },
     sqlite: {
       connection: {
-        filename: path.join(__dirname, '..', '..', env('DATABASE_FILENAME', '.tmp/data.db')),
+        filename: path.join(
+          __dirname,
+          '..',
+          '..',
+          envString(['DATABASE_FILENAME', 'CMS_DATABASE_FILENAME'], '.tmp/data.db') ??
+            '.tmp/data.db',
+        ),
       },
       useNullAsDefault: true,
     },
@@ -55,7 +74,10 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Database 
     connection: {
       client,
       ...connections[client],
-      acquireConnectionTimeout: env.int('DATABASE_CONNECTION_TIMEOUT', 60000),
+      acquireConnectionTimeout: envInt(
+        ['DATABASE_CONNECTION_TIMEOUT', 'CMS_DATABASE_CONNECTION_TIMEOUT'],
+        60000,
+      ),
     },
   };
 };

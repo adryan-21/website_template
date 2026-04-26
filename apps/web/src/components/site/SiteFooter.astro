@@ -1,19 +1,18 @@
 ---
 import type { CmsLink } from '@website-template/cms-sdk';
+import { shellClass, textLinkClass } from '@website-template/ui';
+import { localizeHref, type SiteLocale } from '@/lib/site';
 
 interface Props {
+  locale: SiteLocale;
   siteName: string;
   siteDescription: string;
   footerLinks: CmsLink[];
   socialLinks: CmsLink[];
 }
 
-const { siteName, siteDescription, footerLinks, socialLinks } = Astro.props;
+const { locale, siteName, siteDescription, footerLinks, socialLinks } = Astro.props;
 const year = new Date().getFullYear();
-
-const shellClass = 'mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8';
-const linkClass =
-  'text-sm leading-7 text-zinc-600 transition hover:text-zinc-950 focus-visible:text-zinc-950 focus-visible:outline-none';
 ---
 
 <footer class="border-t border-zinc-900/10">
@@ -35,8 +34,8 @@ const linkClass =
               {footerLinks.map((link) => (
                 <li>
                   <a
-                    class={linkClass}
-                    href={link.href}
+                    class={textLinkClass}
+                    href={localizeHref(link.href, locale)}
                     target={link.external ? '_blank' : undefined}
                     rel={link.external ? 'noreferrer' : undefined}>
                     {link.label}
@@ -53,7 +52,7 @@ const linkClass =
               {socialLinks.map((link) => (
                 <li>
                   <a
-                    class={linkClass}
+                    class={textLinkClass}
                     href={link.href}
                     target={link.external ? '_blank' : undefined}
                     rel={link.external ? 'noreferrer' : undefined}>
