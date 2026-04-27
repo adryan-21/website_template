@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_shared_pricing_feature_items",
+  "info": {
+    "displayName": "Pricing feature item",
+    "description": "Single feature row for a pricing plan."
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "included": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

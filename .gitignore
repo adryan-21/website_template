@@ -18,6 +18,8 @@ build/
 
 apps/web/.astro/
 apps/web/dist/
+apps/web/.contact-queue/
+/.contact-queue/
 apps/cms/.cache/
 apps/cms/.strapi/
 apps/cms/dist/

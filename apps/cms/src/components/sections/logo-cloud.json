@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_sections_logo_clouds",
+  "info": {
+    "displayName": "Logo cloud",
+    "description": "Brand wall / logo strip for trust-building sections on marketing pages."
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.logo-item",
+      "required": true
+    }
+  }
+}

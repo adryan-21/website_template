@@ -110,6 +110,8 @@
       "components": [
         "sections.rich-text",
         "sections.feature-grid",
+        "sections.pricing-grid",
+        "sections.logo-cloud",
         "sections.testimonials",
         "sections.faq",
         "sections.cta-band",

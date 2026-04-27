@@ -1,0 +1,90 @@
+---
+import type { CmsPageLogoCloudSection } from '@website-template/cms-sdk';
+import { eyebrowClass, sectionShellClass, surfaceClass } from '@website-template/ui';
+
+interface Props {
+  section: CmsPageLogoCloudSection;
+}
+
+const { section } = Astro.props;
+const gridClass = 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6';
+---
+
+<section class={sectionShellClass}>
+  <div class="grid gap-5">
+    {
+      (section.eyebrow || section.title || section.description) && (
+        <div class="max-w-3xl space-y-4">
+          {section.eyebrow && <span class={eyebrowClass}>{section.eyebrow}</span>}
+          {section.title && (
+            <h2 class="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
+              {section.title}
+            </h2>
+          )}
+          {section.description && (
+            <p class="text-base leading-8 text-zinc-600">{section.description}</p>
+          )}
+        </div>
+      )
+    }
+
+    {
+      section.items.length > 0 && (
+        <div class={gridClass}>
+          {section.items.map((item) => {
+            const isLinked = Boolean(item.href);
+            const isExternal = item.href.startsWith('http://') || item.href.startsWith('https://');
+            const cardClass = [
+              surfaceClass,
+              'group flex min-h-24 items-center justify-center p-6 text-center transition hover:border-zinc-900/20 hover:bg-white',
+            ];
+
+            if (isLinked) {
+              return (
+                <a
+                  class:list={cardClass}
+                  href={item.href}
+                  rel={isExternal ? 'noreferrer' : undefined}
+                  target={isExternal ? '_blank' : undefined}>
+                  {item.logo ? (
+                    <img
+                      alt={item.logo.alt || item.name}
+                      class="max-h-10 w-auto max-w-full object-contain opacity-80 grayscale transition duration-200 group-hover:opacity-100 group-hover:grayscale-0"
+                      height={item.logo.height}
+                      loading="lazy"
+                      src={item.logo.url}
+                      width={item.logo.width}
+                    />
+                  ) : (
+                    <span class="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                      {item.name}
+                    </span>
+                  )}
+                </a>
+              );
+            }
+
+            return (
+              <div class:list={cardClass}>
+                {item.logo ? (
+                  <img
+                    alt={item.logo.alt || item.name}
+                    class="max-h-10 w-auto max-w-full object-contain opacity-80 grayscale"
+                    height={item.logo.height}
+                    loading="lazy"
+                    src={item.logo.url}
+                    width={item.logo.width}
+                  />
+                ) : (
+                  <span class="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                    {item.name}
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )
+    }
+  </div>
+</section>

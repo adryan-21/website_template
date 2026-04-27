@@ -25,6 +25,27 @@ type FeatureItemInput = {
   metric?: string;
 };
 
+type PricingFeatureInput = {
+  label: string;
+  included?: boolean;
+};
+
+type PricingPlanInput = {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  price: string;
+  billingPeriod?: string;
+  featured?: boolean;
+  features: PricingFeatureInput[];
+  cta?: LinkInput;
+};
+
+type LogoItemInput = {
+  name: string;
+  href?: string;
+};
+
 type FaqItemInput = {
   question: string;
   answer: string;
@@ -53,6 +74,23 @@ type FeatureGridBlockInput = {
   description?: string;
   columns?: '2' | '3';
   items: FeatureItemInput[];
+};
+
+type PricingGridBlockInput = {
+  __component: 'sections.pricing-grid';
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  columns?: '2' | '3';
+  plans: PricingPlanInput[];
+};
+
+type LogoCloudBlockInput = {
+  __component: 'sections.logo-cloud';
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  items: LogoItemInput[];
 };
 
 type TestimonialsBlockInput = {
@@ -105,6 +143,8 @@ type ContactFormBlockInput = {
 type PageContentBlockInput =
   | RichTextBlockInput
   | FeatureGridBlockInput
+  | PricingGridBlockInput
+  | LogoCloudBlockInput
   | TestimonialsBlockInput
   | FaqBlockInput
   | CtaBandBlockInput
@@ -392,6 +432,125 @@ const secondaryPageSeeds: Record<string, Record<string, PageSeed>> = {
           ],
         },
         {
+          __component: 'sections.pricing-grid',
+          eyebrow: 'Pakiety startowe',
+          title: 'Pricing grid pozwala zamienić ofertę w czytelne poziomy wejścia bez budowy osobnej podstrony cennika.',
+          description:
+            'To wciąż starter i demo content, ale układ dobrze pokazuje MVP-friendly scenariusz: prosty pakiet startowy, wariant najczęściej wybierany i zakres custom.',
+          columns: '3',
+          plans: [
+            {
+              eyebrow: 'MVP',
+              title: 'Starter',
+              description: 'Dla prostej wizytówki lub lądingu, który ma szybko wyjść online i dać miejsce na dalsze iteracje.',
+              price: 'od 3 900 zł',
+              billingPeriod: 'jednorazowo',
+              features: [
+                {
+                  label: '1 strona + podstawowy page builder',
+                },
+                {
+                  label: 'Lokalizacja PL/EN',
+                  included: false,
+                },
+                {
+                  label: 'Preview workflow',
+                },
+                {
+                  label: 'Rozszerzony contact flow',
+                  included: false,
+                },
+              ],
+              cta: {
+                label: 'Start od MVP',
+                href: '/',
+                variant: 'secondary',
+              },
+            },
+            {
+              eyebrow: 'Najczęstszy wybór',
+              title: 'Growth',
+              description: 'Najlepszy balans dla ofert, usług i prostych serwisów marketingowych z większą elastycznością sekcji.',
+              price: 'od 7 900 zł',
+              billingPeriod: 'jednorazowo',
+              featured: true,
+              features: [
+                {
+                  label: 'Wiele podstron z modelu page',
+                },
+                {
+                  label: 'Lokalizacja PL/EN',
+                },
+                {
+                  label: 'Page builder z sekcjami sprzedażowymi',
+                },
+                {
+                  label: 'Contact flow z providerami i retry queue',
+                },
+              ],
+              cta: {
+                label: 'Porozmawiajmy',
+                href: '/',
+                variant: 'primary',
+              },
+            },
+            {
+              eyebrow: 'Custom',
+              title: 'Scale',
+              description: 'Dla bardziej rozbudowanego scope’u, integracji i dalszego rozwijania foundation zamiast stawiania wszystkiego od zera.',
+              price: 'wycena indywidualna',
+              billingPeriod: 'warsztat + estymacja',
+              features: [
+                {
+                  label: 'Niestandardowe bloki page buildera',
+                },
+                {
+                  label: 'Integracje CRM / automatyzacje',
+                },
+                {
+                  label: 'Storage provider dla assetów',
+                },
+                {
+                  label: 'Dedykowane dashboardy klienta',
+                  included: false,
+                },
+              ],
+              cta: {
+                label: 'Opisz zakres',
+                href: '/',
+                variant: 'ghost',
+              },
+            },
+          ],
+        },
+        {
+          __component: 'sections.logo-cloud',
+          eyebrow: 'Zaufali nam',
+          title: 'Logo cloud daje szybki sygnał zaufania nawet wtedy, gdy projekt jest jeszcze na etapie MVP.',
+          description:
+            'Na start możesz pokazać same nazwy marek, a gdy projekt dojrzeje — podmienić je na właściwe logotypy z biblioteki mediów Strapi.',
+          items: [
+            {
+              name: 'Northstar Studio',
+            },
+            {
+              name: 'Lumen Commerce',
+            },
+            {
+              name: 'Harbor Legal',
+            },
+            {
+              name: 'Vectora Tech',
+            },
+            {
+              name: 'Cobalt Health',
+            },
+            {
+              name: 'Altitude Ops',
+            },
+          ],
+        },
+        {
           __component: 'sections.testimonials',
           eyebrow: 'Social proof',
           title: 'Przykładowe referencje pokazują, jak ten blok wzmacnia ofertę.',
@@ -483,7 +642,7 @@ const secondaryPageSeeds: Record<string, Record<string, PageSeed>> = {
           submitLabel: 'Wyślij wiadomość',
           privacyNote:
             'Formularz w MVP forwarduje zgłoszenie do podpisanego webhooka po stronie web. Nie zapisuje leadów w CMS.',
-          successMessage: 'Dzięki! Wiadomość została wysłana — wrócimy z odpowiedzią tak szybko, jak się da.',
+          successMessage: 'Dzięki! Wiadomość została przyjęta — wrócimy z odpowiedzią tak szybko, jak się da.',
           errorMessage:
             'Nie udało się wysłać formularza. Sprawdź pola i spróbuj ponownie za chwilę.',
         },
@@ -566,6 +725,125 @@ const secondaryPageSeeds: Record<string, Record<string, PageSeed>> = {
               title: 'A CTA band closes the section and points visitors toward the next action.',
               body: 'In this starter it works nicely for contact prompts, briefs, or preview-oriented editorial flows.',
               metric: 'CTA',
+            },
+          ],
+        },
+        {
+          __component: 'sections.pricing-grid',
+          eyebrow: 'Starter packages',
+          title: 'A pricing grid turns the offer into clear entry tiers without forcing a separate pricing page.',
+          description:
+            'This is still demo content, but it shows an MVP-friendly pattern well: a lean starter tier, a recommended growth package, and a custom expansion track.',
+          columns: '3',
+          plans: [
+            {
+              eyebrow: 'MVP',
+              title: 'Starter',
+              description: 'For a lean brochure site or landing page that should go live quickly and leave room for later iterations.',
+              price: 'from €900',
+              billingPeriod: 'one-off',
+              features: [
+                {
+                  label: 'Single page + basic page builder',
+                },
+                {
+                  label: 'PL/EN localization',
+                  included: false,
+                },
+                {
+                  label: 'Preview workflow',
+                },
+                {
+                  label: 'Advanced contact flow',
+                  included: false,
+                },
+              ],
+              cta: {
+                label: 'Start lean',
+                href: '/',
+                variant: 'secondary',
+              },
+            },
+            {
+              eyebrow: 'Most popular',
+              title: 'Growth',
+              description: 'The best balance for services pages and marketing sites that need a broader section set without overengineering.',
+              price: 'from €1,900',
+              billingPeriod: 'one-off',
+              featured: true,
+              features: [
+                {
+                  label: 'Multiple content pages from the page model',
+                },
+                {
+                  label: 'PL/EN localization',
+                },
+                {
+                  label: 'Sales-oriented page builder sections',
+                },
+                {
+                  label: 'Provider-based contact flow with retry queue',
+                },
+              ],
+              cta: {
+                label: 'Let’s talk',
+                href: '/',
+                variant: 'primary',
+              },
+            },
+            {
+              eyebrow: 'Custom',
+              title: 'Scale',
+              description: 'For broader scopes, deeper integrations, and projects that extend the foundation instead of rebuilding it from scratch.',
+              price: 'custom quote',
+              billingPeriod: 'discovery + estimate',
+              features: [
+                {
+                  label: 'Custom page builder blocks',
+                },
+                {
+                  label: 'CRM / automation integrations',
+                },
+                {
+                  label: 'Asset storage provider',
+                },
+                {
+                  label: 'Dedicated client dashboards',
+                  included: false,
+                },
+              ],
+              cta: {
+                label: 'Share the scope',
+                href: '/',
+                variant: 'ghost',
+              },
+            },
+          ],
+        },
+        {
+          __component: 'sections.logo-cloud',
+          eyebrow: 'Trusted by',
+          title: 'A logo cloud adds a quick trust signal even when the project is still in MVP mode.',
+          description:
+            'You can start with simple brand names and later swap them for real logos uploaded through the Strapi media library.',
+          items: [
+            {
+              name: 'Northstar Studio',
+            },
+            {
+              name: 'Lumen Commerce',
+            },
+            {
+              name: 'Harbor Legal',
+            },
+            {
+              name: 'Vectora Tech',
+            },
+            {
+              name: 'Cobalt Health',
+            },
+            {
+              name: 'Altitude Ops',
             },
           ],
         },
@@ -661,7 +939,7 @@ const secondaryPageSeeds: Record<string, Record<string, PageSeed>> = {
           submitLabel: 'Send message',
           privacyNote:
             'In this MVP, the form forwards submissions to a signed webhook owned by the web app. Leads are not stored in the CMS.',
-          successMessage: 'Thanks! Your message has been sent — we will get back to you soon.',
+          successMessage: 'Thanks! Your message has been received — we will get back to you soon.',
           errorMessage:
             'The form could not be sent right now. Please review the fields and try again in a moment.',
         },

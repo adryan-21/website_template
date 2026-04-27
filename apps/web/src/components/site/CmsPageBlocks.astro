@@ -5,6 +5,8 @@ import CmsPageCtaBandSection from '@/components/site/CmsPageCtaBandSection.astro
 import CmsPageContactFormSection from '@/components/site/CmsPageContactFormSection.astro';
 import CmsPageFaqSection from '@/components/site/CmsPageFaqSection.astro';
 import CmsPageFeatureGridSection from '@/components/site/CmsPageFeatureGridSection.astro';
+import CmsPageLogoCloudSection from '@/components/site/CmsPageLogoCloudSection.astro';
+import CmsPagePricingGridSection from '@/components/site/CmsPagePricingGridSection.astro';
 import CmsPageRichTextSection from '@/components/site/CmsPageRichTextSection.astro';
 import CmsPageTestimonialsSection from '@/components/site/CmsPageTestimonialsSection.astro';
 
@@ -26,6 +28,14 @@ const { blocks, locale } = Astro.props;
       return <CmsPageFeatureGridSection section={block} />;
     }
 
+    if (block.type === 'pricing-grid') {
+      return <CmsPagePricingGridSection section={block} locale={locale} />;
+    }
+
+    if (block.type === 'logo-cloud') {
+      return <CmsPageLogoCloudSection section={block} />;
+    }
+
     if (block.type === 'testimonials') {
       return <CmsPageTestimonialsSection section={block} />;
     }
@@ -38,6 +48,10 @@ const { blocks, locale } = Astro.props;
       return <CmsPageContactFormSection section={block} locale={locale} />;
     }
 
-    return <CmsPageCtaBandSection section={block} locale={locale} />;
+    if (block.type === 'cta-band') {
+      return <CmsPageCtaBandSection section={block} locale={locale} />;
+    }
+
+    return null;
   })
 }

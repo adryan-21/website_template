@@ -58,6 +58,8 @@ Starter monorepo pod landing page i proste strony marketingowe.
 - landing page gotowy pod zasilenie treścią z CMS
 - zwykłe podstrony z modelu `page` renderowane automatycznie pod `/:slug` i `/en/:slug`
 - foundation blokowego page buildera w Strapi przez `dynamic zones`
+- blok pricing grid do pokazywania pakietów, progów wejścia i zakresów MVP
+- blok logo cloud do szybkiego pokazania partnerów, klientów lub marek zaufania
 - blok testimonials do social proof na stronach ofertowych i usługowych
 - blok FAQ do domykania pytań i obiekcji na stronach usługowych
 - kontaktowy blok page buildera z webhookowym submit flow po stronie `apps/web`
@@ -105,6 +107,8 @@ Starter monorepo pod landing page i proste strony marketingowe.
 - pierwszy zestaw bloków obejmuje:
    - `sections.rich-text`
    - `sections.feature-grid`
+   - `sections.pricing-grid`
+   - `sections.logo-cloud`
    - `sections.testimonials`
    - `sections.faq`
    - `sections.cta-band`
@@ -112,12 +116,24 @@ Starter monorepo pod landing page i proste strony marketingowe.
 - jeśli `contentBlocks` są obecne, frontend renderuje je wspólnym rendererem zamiast legacy `highlights` / `featureItems`
 - obecne pola hero/CTA pozostają wspierane, więc to jest rozszerzenie addytywne, a nie bolesny rewrite
 
+## Pricing grid block
+
+- blok `sections.pricing-grid` renderuje karty pakietów / planów bez dodatkowej hydracji JavaScript
+- schema opiera się o repeatowalne `shared.pricing-plan` i zagnieżdżone `shared.pricing-feature-item`, więc możesz modelować cenę, opis, listę cech, wyróżnienie planu i CTA
+- starter seeduje demonstracyjny pricing grid na stronach `/oferta` oraz `/en/services`, więc blok od razu działa we wspólnym rendererze page buildera
+
 ## Testimonials block
 
 - blok `sections.testimonials` renderuje karty opinii bez dodatkowej hydracji
 - schema opiera się o repeatowalne `shared.testimonial-item`, więc możesz łatwo zarządzać cytatem, autorem, rolą i firmą
 - starter seeduje przykładowe testimonials na stronach `/oferta` oraz `/en/services`
 - domyślne seedy są demonstracyjne, więc w realnym projekcie warto je podmienić na prawdziwe referencje klienta
+
+## Logo cloud block
+
+- blok `sections.logo-cloud` renderuje siatkę marek / partnerów bez dodatkowej hydracji JavaScript
+- schema opiera się o repeatowalne `shared.logo-item`, gdzie możesz zacząć od samej nazwy marki, a później dołączyć prawdziwy logotyp z media library Strapi
+- starter seeduje demonstracyjny logo cloud na stronach `/oferta` oraz `/en/services`, więc nowy blok od razu wpada do wspólnego renderera page buildera
 
 ## FAQ block
 
@@ -129,13 +145,20 @@ Starter monorepo pod landing page i proste strony marketingowe.
 
 - blok `sections.contact-form` renderuje Astro-first formularz kontaktowy na stronach z modelu `page`
 - frontend wysyła `POST` do `apps/web/src/pages/api/contact.json.ts`
-- endpoint waliduje payload, stosuje prosty rate limiting per IP i forwarduje zgłoszenie do webhooka z podpisem HMAC SHA-256
-- aktualny kontrakt webhooka:
+- endpoint waliduje payload, stosuje prosty rate limiting per IP i dostarcza zgłoszenie do jednego lub wielu providerów
+- obecnie wspierane ścieżki dostawy:
+   - podpisany webhook (`CONTACT_WEBHOOK_URL` / `WEB_CONTACT_WEBHOOK_URL`) — zgodność wsteczna z dotychczasowym flow
+   - dodatkowy webhook CRM (`CONTACT_CRM_WEBHOOK_URL`) — np. pod automatyzację CRM / Make / n8n / custom backend
+   - email provider przez Resend (`CONTACT_RESEND_*`) — szybki fallback lub równoległa dostawa leada na skrzynkę
+- jeśli provider zwróci błąd retryable (np. timeout / `429` / `5xx`), web app może zapisać osobny job do file-based retry queue i ponawiać dostawę później
+- manualny flush i podgląd kolejki są dostępne pod `apps/web/src/pages/api/contact-queue.json.ts`, zabezpieczone sekretem kolejki
+- kontrakt podpisanego webhooka pozostał zgodny wstecznie:
    - headers:
       - `x-website-template-signature`
       - `x-website-template-signature-algorithm`
       - `x-website-template-message-id`
       - `x-website-template-timestamp`
+      - `x-website-template-provider-id`
    - body:
       - `messageId`
       - `timestamp`
@@ -145,12 +168,26 @@ Starter monorepo pod landing page i proste strony marketingowe.
 ### Kontaktowe env-y
 
 - `WEB_CONTACT_ENABLED` — włącza submit flow po stronie web
-- `WEB_CONTACT_WEBHOOK_URL` — docelowy adres webhooka odbierającego zgłoszenia
-- `WEB_CONTACT_WEBHOOK_SECRET` — sekret do podpisu HMAC outbound payloadu
+- `WEB_CONTACT_WEBHOOK_URL` / `WEB_CONTACT_WEBHOOK_SECRET` — główny podpisany webhook
+- `WEB_CONTACT_CRM_WEBHOOK_URL` / `WEB_CONTACT_CRM_WEBHOOK_SECRET` — opcjonalny drugi webhook pod CRM / automatyzacje
+- `WEB_CONTACT_RESEND_API_KEY` / `WEB_CONTACT_RESEND_FROM_EMAIL` / `WEB_CONTACT_RESEND_TO_EMAIL` — opcjonalna dostawa email przez Resend
+- `WEB_CONTACT_RESEND_REPLY_TO_EMAIL` — opcjonalny reply-to; gdy go nie ustawisz, użyty zostanie email nadawcy z formularza
+- `WEB_CONTACT_QUEUE_ENABLED` — włącza file-based retry queue dla błędów retryable
+- `WEB_CONTACT_QUEUE_DIRECTORY` — katalog na joby kolejki; domyślnie `.contact-queue`
+- `WEB_CONTACT_QUEUE_SECRET` — sekret do ręcznego statusu / flushu kolejki przez `GET`/`POST /api/contact-queue.json`
+- `WEB_CONTACT_QUEUE_MAX_ATTEMPTS` — maksymalna liczba prób dostawy jednego joba
+- `WEB_CONTACT_QUEUE_RETRY_BASE_DELAY_MS` — bazowe opóźnienie retry z backoffem wykładniczym
+- `WEB_CONTACT_QUEUE_PROCESS_LIMIT` — ile due jobów przetworzyć podczas jednego flushu
 - `WEB_CONTACT_RATE_LIMIT_WINDOW_MS` — okno rate limiting w ms
 - `WEB_CONTACT_RATE_LIMIT_MAX_REQUESTS` — maksymalna liczba prób w oknie
 
 W `apps/web/.env.example` dostępne są także aliasy bez prefiksu `WEB_` (`CONTACT_*`), zgodne z obecną konwencją fallbacków w web app.
+
+### Retry queue — uwagi operacyjne
+
+- obecna kolejka jest **file-based** i najlepiej pasuje do baseline'u Node / VPS / Docker z trwałym dyskiem
+- przy deploymentach efemerycznych warto później podmienić ją na Redis / SQS / kolejkę platformową zamiast polegać na lokalnym filesystemie
+- każdy nowy submit próbuje najpierw opróżnić zaległą kolejkę, a dodatkowo możesz ręcznie sprawdzić status (`GET`) lub wymusić flush (`POST`) pod `/api/contact-queue.json`
 
 ## Preview mode
 
@@ -179,6 +216,6 @@ W `apps/web/.env.example` dostępne są także aliasy bez prefiksu `WEB_` (`CONT
 
 ## Następne rozszerzenia
 
-- kolejne bloki page buildera (np. logo cloud)
-- provider email / CRM integration / retry queue dla contact flow
+- kolejne bloki page buildera (np. stats strip / comparison table)
+- durable queue backend dla contact flow (np. Redis / SQS)
 - storage provider dla assetów Strapi (np. S3 / R2)

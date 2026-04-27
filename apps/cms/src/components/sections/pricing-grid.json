@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_sections_pricing_grids",
+  "info": {
+    "displayName": "Pricing grid",
+    "description": "Pricing cards for offers, packages, and MVP scope comparisons."
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "columns": {
+      "type": "enumeration",
+      "enum": ["2", "3"],
+      "default": "3"
+    },
+    "plans": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.pricing-plan",
+      "required": true
+    }
+  }
+}

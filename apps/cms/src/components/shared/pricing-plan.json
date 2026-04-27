@@ -1,0 +1,42 @@
+{
+  "collectionName": "components_shared_pricing_plans",
+  "info": {
+    "displayName": "Pricing plan",
+    "description": "Single plan card for the pricing grid section."
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "price": {
+      "type": "string",
+      "required": true
+    },
+    "billingPeriod": {
+      "type": "string"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "features": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.pricing-feature-item",
+      "required": true
+    },
+    "cta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.link"
+    }
+  }
+}

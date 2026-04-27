@@ -31,6 +31,31 @@ export interface FeatureItem {
   metric?: string;
 }
 
+export interface PricingFeatureItem {
+  id: string;
+  label: string;
+  included: boolean;
+}
+
+export interface PricingPlan {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  price: string;
+  billingPeriod: string;
+  featured: boolean;
+  features: PricingFeatureItem[];
+  cta: CmsLink;
+}
+
+export interface LogoItem {
+  id: string;
+  name: string;
+  href: string;
+  logo?: CmsMedia;
+}
+
 export interface FaqItem {
   id: string;
   question: string;
@@ -67,6 +92,25 @@ export interface CmsPageFeatureGridSection {
   description: string;
   columns: CmsPageSectionColumns;
   items: FeatureItem[];
+}
+
+export interface CmsPagePricingGridSection {
+  id: string;
+  type: 'pricing-grid';
+  eyebrow: string;
+  title: string;
+  description: string;
+  columns: CmsPageSectionColumns;
+  plans: PricingPlan[];
+}
+
+export interface CmsPageLogoCloudSection {
+  id: string;
+  type: 'logo-cloud';
+  eyebrow: string;
+  title: string;
+  description: string;
+  items: LogoItem[];
 }
 
 export interface CmsPageTestimonialsSection {
@@ -123,6 +167,8 @@ export interface CmsPageContactFormSection {
 export type CmsPageSection =
   | CmsPageRichTextSection
   | CmsPageFeatureGridSection
+  | CmsPagePricingGridSection
+  | CmsPageLogoCloudSection
   | CmsPageTestimonialsSection
   | CmsPageFaqSection
   | CmsPageCtaBandSection
@@ -320,6 +366,168 @@ const defaultOfferContentBlocks: CmsPageSection[] = [
     ],
   },
   {
+    id: 'offer-pricing-grid',
+    type: 'pricing-grid',
+    eyebrow: 'Pakiety startowe',
+    title: 'Pricing grid pozwala zamienić ofertę w czytelne poziomy wejścia bez osobnej strony cennika.',
+    description:
+      'To nadal demo content, ale dobrze pokazuje kierunek MVP: prosty próg wejścia, najczęściej wybierany wariant i zakres custom dla większych wdrożeń.',
+    columns: 3,
+    plans: [
+      {
+        id: 'offer-plan-starter',
+        eyebrow: 'MVP',
+        title: 'Starter',
+        description: 'Dla prostej wizytówki lub lądingu, który ma szybko wyjść online i dać miejsce na dalsze iteracje.',
+        price: 'od 3 900 zł',
+        billingPeriod: 'jednorazowo',
+        featured: false,
+        features: [
+          {
+            id: 'offer-plan-starter-feature-page',
+            label: '1 strona + podstawowy page builder',
+            included: true,
+          },
+          {
+            id: 'offer-plan-starter-feature-locale',
+            label: 'Lokalizacja PL/EN',
+            included: false,
+          },
+          {
+            id: 'offer-plan-starter-feature-preview',
+            label: 'Preview workflow',
+            included: true,
+          },
+          {
+            id: 'offer-plan-starter-feature-contact',
+            label: 'Rozszerzony contact flow',
+            included: false,
+          },
+        ],
+        cta: {
+          id: 'offer-plan-starter-cta',
+          label: 'Start od MVP',
+          href: '/',
+          variant: 'secondary',
+        },
+      },
+      {
+        id: 'offer-plan-growth',
+        eyebrow: 'Najczęstszy wybór',
+        title: 'Growth',
+        description: 'Najlepszy balans dla ofert, usług i prostych serwisów marketingowych z większą elastycznością sekcji.',
+        price: 'od 7 900 zł',
+        billingPeriod: 'jednorazowo',
+        featured: true,
+        features: [
+          {
+            id: 'offer-plan-growth-feature-pages',
+            label: 'Wiele podstron z modelu page',
+            included: true,
+          },
+          {
+            id: 'offer-plan-growth-feature-locales',
+            label: 'Lokalizacja PL/EN',
+            included: true,
+          },
+          {
+            id: 'offer-plan-growth-feature-blocks',
+            label: 'Page builder z sekcjami sprzedażowymi',
+            included: true,
+          },
+          {
+            id: 'offer-plan-growth-feature-contact',
+            label: 'Contact flow z providerami i retry queue',
+            included: true,
+          },
+        ],
+        cta: {
+          id: 'offer-plan-growth-cta',
+          label: 'Porozmawiajmy',
+          href: '/',
+          variant: 'primary',
+        },
+      },
+      {
+        id: 'offer-plan-scale',
+        eyebrow: 'Custom',
+        title: 'Scale',
+        description: 'Dla bardziej rozbudowanego scope’u, integracji i dalszego rozwijania foundation zamiast stawiania wszystkiego od zera.',
+        price: 'wycena indywidualna',
+        billingPeriod: 'warsztat + estymacja',
+        featured: false,
+        features: [
+          {
+            id: 'offer-plan-scale-feature-blocks',
+            label: 'Niestandardowe bloki page buildera',
+            included: true,
+          },
+          {
+            id: 'offer-plan-scale-feature-crm',
+            label: 'Integracje CRM / automatyzacje',
+            included: true,
+          },
+          {
+            id: 'offer-plan-scale-feature-storage',
+            label: 'Storage provider dla assetów',
+            included: true,
+          },
+          {
+            id: 'offer-plan-scale-feature-dashboard',
+            label: 'Dedykowane dashboardy klienta',
+            included: false,
+          },
+        ],
+        cta: {
+          id: 'offer-plan-scale-cta',
+          label: 'Opisz zakres',
+          href: '/',
+          variant: 'ghost',
+        },
+      },
+    ],
+  },
+  {
+    id: 'offer-logo-cloud',
+    type: 'logo-cloud',
+    eyebrow: 'Zaufali nam',
+    title: 'Logo cloud daje szybki sygnał zaufania bez dokładania ciężkiej sekcji case studies.',
+    description:
+      'Na MVP możesz zacząć od samych nazw marek, a później podmienić je na prawdziwe logotypy w Strapi, kiedy pojawią się gotowe assety.',
+    items: [
+      {
+        id: 'offer-logo-northstar',
+        name: 'Northstar Studio',
+        href: '',
+      },
+      {
+        id: 'offer-logo-lumen',
+        name: 'Lumen Commerce',
+        href: '',
+      },
+      {
+        id: 'offer-logo-harbor',
+        name: 'Harbor Legal',
+        href: '',
+      },
+      {
+        id: 'offer-logo-vectora',
+        name: 'Vectora Tech',
+        href: '',
+      },
+      {
+        id: 'offer-logo-cobalt',
+        name: 'Cobalt Health',
+        href: '',
+      },
+      {
+        id: 'offer-logo-altitude',
+        name: 'Altitude Ops',
+        href: '',
+      },
+    ],
+  },
+  {
     id: 'offer-testimonials',
     type: 'testimonials',
     eyebrow: 'Social proof',
@@ -417,7 +625,7 @@ const defaultOfferContentBlocks: CmsPageSection[] = [
     submitLabel: 'Wyślij wiadomość',
     privacyNote:
       'Formularz w MVP forwarduje zgłoszenie do podpisanego webhooka po stronie web. Nie zapisuje leadów w CMS.',
-    successMessage: 'Dzięki! Wiadomość została wysłana — wrócimy z odpowiedzią tak szybko, jak się da.',
+    successMessage: 'Dzięki! Wiadomość została przyjęta — wrócimy z odpowiedzią tak szybko, jak się da.',
     errorMessage: 'Nie udało się wysłać formularza. Sprawdź pola i spróbuj ponownie za chwilę.',
   },
 ];
@@ -462,6 +670,168 @@ const defaultServicesContentBlocks: CmsPageSection[] = [
         title: 'A CTA band closes the section and points visitors toward the next action.',
         body: 'In this starter it works nicely for contact prompts, briefs, or preview-oriented editorial flows.',
         metric: 'CTA',
+      },
+    ],
+  },
+  {
+    id: 'services-pricing-grid',
+    type: 'pricing-grid',
+    eyebrow: 'Starter packages',
+    title: 'A pricing grid turns the offer into clear entry tiers without forcing a separate pricing page.',
+    description:
+      'This is still demo content, but it shows the MVP-friendly pattern well: a lean starter tier, a recommended growth package, and a custom expansion track.',
+    columns: 3,
+    plans: [
+      {
+        id: 'services-plan-starter',
+        eyebrow: 'MVP',
+        title: 'Starter',
+        description: 'For a lean brochure site or landing page that should go live quickly and leave room for later iterations.',
+        price: 'from €900',
+        billingPeriod: 'one-off',
+        featured: false,
+        features: [
+          {
+            id: 'services-plan-starter-feature-page',
+            label: 'Single page + basic page builder',
+            included: true,
+          },
+          {
+            id: 'services-plan-starter-feature-locale',
+            label: 'PL/EN localization',
+            included: false,
+          },
+          {
+            id: 'services-plan-starter-feature-preview',
+            label: 'Preview workflow',
+            included: true,
+          },
+          {
+            id: 'services-plan-starter-feature-contact',
+            label: 'Advanced contact flow',
+            included: false,
+          },
+        ],
+        cta: {
+          id: 'services-plan-starter-cta',
+          label: 'Start lean',
+          href: '/',
+          variant: 'secondary',
+        },
+      },
+      {
+        id: 'services-plan-growth',
+        eyebrow: 'Most popular',
+        title: 'Growth',
+        description: 'The best balance for services pages and marketing sites that need a broader section set without overengineering.',
+        price: 'from €1,900',
+        billingPeriod: 'one-off',
+        featured: true,
+        features: [
+          {
+            id: 'services-plan-growth-feature-pages',
+            label: 'Multiple content pages from the page model',
+            included: true,
+          },
+          {
+            id: 'services-plan-growth-feature-locales',
+            label: 'PL/EN localization',
+            included: true,
+          },
+          {
+            id: 'services-plan-growth-feature-blocks',
+            label: 'Sales-oriented page builder sections',
+            included: true,
+          },
+          {
+            id: 'services-plan-growth-feature-contact',
+            label: 'Provider-based contact flow with retry queue',
+            included: true,
+          },
+        ],
+        cta: {
+          id: 'services-plan-growth-cta',
+          label: 'Let’s talk',
+          href: '/',
+          variant: 'primary',
+        },
+      },
+      {
+        id: 'services-plan-scale',
+        eyebrow: 'Custom',
+        title: 'Scale',
+        description: 'For broader scopes, deeper integrations, and projects that extend the foundation instead of rebuilding it from scratch.',
+        price: 'custom quote',
+        billingPeriod: 'discovery + estimate',
+        featured: false,
+        features: [
+          {
+            id: 'services-plan-scale-feature-blocks',
+            label: 'Custom page builder blocks',
+            included: true,
+          },
+          {
+            id: 'services-plan-scale-feature-crm',
+            label: 'CRM / automation integrations',
+            included: true,
+          },
+          {
+            id: 'services-plan-scale-feature-storage',
+            label: 'Asset storage provider',
+            included: true,
+          },
+          {
+            id: 'services-plan-scale-feature-dashboard',
+            label: 'Dedicated client dashboards',
+            included: false,
+          },
+        ],
+        cta: {
+          id: 'services-plan-scale-cta',
+          label: 'Share the scope',
+          href: '/',
+          variant: 'ghost',
+        },
+      },
+    ],
+  },
+  {
+    id: 'services-logo-cloud',
+    type: 'logo-cloud',
+    eyebrow: 'Trusted by',
+    title: 'A logo cloud adds a fast trust signal without forcing a heavier case-study section.',
+    description:
+      'For an MVP you can start with plain brand names, then swap them for real uploaded logos once the asset pack is ready.',
+    items: [
+      {
+        id: 'services-logo-northstar',
+        name: 'Northstar Studio',
+        href: '',
+      },
+      {
+        id: 'services-logo-lumen',
+        name: 'Lumen Commerce',
+        href: '',
+      },
+      {
+        id: 'services-logo-harbor',
+        name: 'Harbor Legal',
+        href: '',
+      },
+      {
+        id: 'services-logo-vectora',
+        name: 'Vectora Tech',
+        href: '',
+      },
+      {
+        id: 'services-logo-cobalt',
+        name: 'Cobalt Health',
+        href: '',
+      },
+      {
+        id: 'services-logo-altitude',
+        name: 'Altitude Ops',
+        href: '',
       },
     ],
   },
@@ -569,7 +939,7 @@ const defaultServicesContentBlocks: CmsPageSection[] = [
     submitLabel: 'Send message',
     privacyNote:
       'In this MVP, the form forwards submissions to a signed webhook owned by the web app. Leads are not stored in the CMS.',
-    successMessage: 'Thanks! Your message has been sent — we will get back to you soon.',
+    successMessage: 'Thanks! Your message has been received — we will get back to you soon.',
     errorMessage:
       'The form could not be sent right now. Please review the fields and try again in a moment.',
   },
@@ -790,6 +1160,9 @@ const DEFAULT_PAGE_POPULATE_QUERY = [
   'populate[seo][populate]=*',
   'populate[contentBlocks][on][sections.rich-text][populate]=*',
   'populate[contentBlocks][on][sections.feature-grid][populate]=*',
+  'populate[contentBlocks][on][sections.pricing-grid][populate][plans][populate][features]=*',
+  'populate[contentBlocks][on][sections.pricing-grid][populate][plans][populate][cta]=*',
+  'populate[contentBlocks][on][sections.logo-cloud][populate][items][populate][logo]=*',
   'populate[contentBlocks][on][sections.testimonials][populate]=*',
   'populate[contentBlocks][on][sections.faq][populate]=*',
   'populate[contentBlocks][on][sections.cta-band][populate]=*',
@@ -1040,6 +1413,92 @@ const mapFeatureItems = (value: unknown, fallback: FeatureItem[]): FeatureItem[]
   return mapped.length > 0 ? mapped : fallback;
 };
 
+const mapPricingFeatures = (value: unknown, fallback: PricingFeatureItem[]): PricingFeatureItem[] => {
+  if (!Array.isArray(value)) {
+    return fallback;
+  }
+
+  const mapped = value
+    .map((entry, index) => {
+      const record = unwrapEntity(entry);
+
+      if (!record) {
+        return null;
+      }
+
+      const fallbackItem = fallback[index] ?? fallback[0];
+
+      return {
+        id: getText(record.id, fallbackItem?.id ?? `pricing-feature-${index}`),
+        label: getText(record.label, fallbackItem?.label ?? ''),
+        included: getBoolean(record.included, fallbackItem?.included ?? true),
+      } satisfies PricingFeatureItem;
+    })
+    .filter((item): item is Exclude<typeof item, null> => item !== null && item.label.length > 0);
+
+  return mapped.length > 0 ? mapped : fallback;
+};
+
+const mapPricingPlans = (value: unknown, fallback: PricingPlan[]): PricingPlan[] => {
+  if (!Array.isArray(value)) {
+    return fallback;
+  }
+
+  const mapped = value
+    .map((entry, index) => {
+      const record = unwrapEntity(entry);
+
+      if (!record) {
+        return null;
+      }
+
+      const fallbackPlan = fallback[index] ?? fallback[0];
+
+      return {
+        id: getText(record.id, fallbackPlan?.id ?? `pricing-plan-${index}`),
+        eyebrow: getText(record.eyebrow, fallbackPlan?.eyebrow ?? ''),
+        title: getText(record.title, fallbackPlan?.title ?? ''),
+        description: getText(record.description, fallbackPlan?.description ?? ''),
+        price: getText(record.price, fallbackPlan?.price ?? ''),
+        billingPeriod: getText(record.billingPeriod, fallbackPlan?.billingPeriod ?? ''),
+        featured: getBoolean(record.featured, fallbackPlan?.featured ?? false),
+        features: mapPricingFeatures(record.features, fallbackPlan?.features ?? []),
+        cta: sanitizeLandingLink(mapLink(record.cta, fallbackPlan?.cta ?? emptyPrimaryCta), emptyPrimaryCta),
+      } satisfies PricingPlan;
+    })
+    .filter((plan): plan is Exclude<typeof plan, null> => plan !== null && plan.title.length > 0);
+
+  return mapped.length > 0 ? mapped : fallback;
+};
+
+const mapLogoItems = (value: unknown, fallback: LogoItem[], assetOrigin?: string): LogoItem[] => {
+  if (!Array.isArray(value)) {
+    return fallback;
+  }
+
+  const mapped = value
+    .map((entry, index) => {
+      const record = unwrapEntity(entry);
+
+      if (!record) {
+        return null;
+      }
+
+      const fallbackItem = fallback[index] ?? fallback[0];
+      const hrefValue = getText(record.href, fallbackItem?.href ?? '');
+
+      return {
+        id: getText(record.id, fallbackItem?.id ?? `logo-item-${index}`),
+        name: getText(record.name, fallbackItem?.name ?? ''),
+        href: hrefValue ? normalizeHref(hrefValue, hrefValue) : fallbackItem?.href ?? '',
+        logo: mapMedia(record.logo, assetOrigin) ?? fallbackItem?.logo,
+      } satisfies LogoItem;
+    })
+    .filter((item): item is Exclude<typeof item, null> => item !== null && item.name.length > 0);
+
+  return mapped.length > 0 ? mapped : fallback;
+};
+
 const mapFaqItems = (value: unknown, fallback: FaqItem[]): FaqItem[] => {
   if (!Array.isArray(value)) {
     return fallback;
@@ -1094,7 +1553,11 @@ const mapTestimonialItems = (value: unknown, fallback: TestimonialItem[]): Testi
   return mapped.length > 0 ? mapped : fallback;
 };
 
-const mapPageSections = (value: unknown, fallback: CmsPageSection[]): CmsPageSection[] => {
+const mapPageSections = (
+  value: unknown,
+  fallback: CmsPageSection[],
+  assetOrigin?: string,
+): CmsPageSection[] => {
   if (!Array.isArray(value)) {
     return fallback;
   }
@@ -1132,6 +1595,29 @@ const mapPageSections = (value: unknown, fallback: CmsPageSection[]): CmsPageSec
           columns: getSectionColumns(record.columns),
           items: filterLandingFeatureItems(mapFeatureItems(record.items, [])),
         } satisfies CmsPageFeatureGridSection;
+      }
+
+      if (componentUid === 'sections.pricing-grid') {
+        return {
+          id,
+          type: 'pricing-grid',
+          eyebrow: getText(record.eyebrow),
+          title: getText(record.title),
+          description: getText(record.description),
+          columns: getSectionColumns(record.columns),
+          plans: mapPricingPlans(record.plans, []),
+        } satisfies CmsPagePricingGridSection;
+      }
+
+      if (componentUid === 'sections.logo-cloud') {
+        return {
+          id,
+          type: 'logo-cloud',
+          eyebrow: getText(record.eyebrow),
+          title: getText(record.title),
+          description: getText(record.description),
+          items: mapLogoItems(record.items, [], assetOrigin),
+        } satisfies CmsPageLogoCloudSection;
       }
 
       if (componentUid === 'sections.testimonials') {
@@ -1279,7 +1765,7 @@ const mapPage = (entry: EntityRecord, fallback: CmsPage = emptyPageFallback, ass
         )
       : filterLandingHighlights(fallback.highlights),
     featureItems: filterLandingFeatureItems(mapFeatureItems(entry.featureItems, fallback.featureItems)),
-    contentBlocks: mapPageSections(entry.contentBlocks, fallback.contentBlocks),
+    contentBlocks: mapPageSections(entry.contentBlocks, fallback.contentBlocks, assetOrigin),
     seo: entry.seo ? mapSeo(entry.seo, fallback.seo ?? emptySeoData, assetOrigin) : fallback.seo,
   };
 };

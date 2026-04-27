@@ -1,0 +1,147 @@
+---
+import type { CmsPagePricingGridSection } from '@website-template/cms-sdk';
+import {
+  eyebrowClass,
+  resolveButtonClass,
+  sectionShellClass,
+  softSurfaceClass,
+  surfaceClass,
+} from '@website-template/ui';
+import { localizeHref, type SiteLocale } from '@/lib/site';
+
+interface Props {
+  section: CmsPagePricingGridSection;
+  locale: SiteLocale;
+}
+
+const { section, locale } = Astro.props;
+const gridClass =
+  section.columns === 2 ? 'grid gap-4 xl:max-w-5xl xl:grid-cols-2' : 'grid gap-4 xl:grid-cols-3';
+---
+
+<section class={sectionShellClass}>
+  <div class="grid gap-5">
+    {
+      (section.eyebrow || section.title || section.description) && (
+        <div class="max-w-3xl space-y-4">
+          {section.eyebrow && <span class={eyebrowClass}>{section.eyebrow}</span>}
+          {section.title && (
+            <h2 class="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
+              {section.title}
+            </h2>
+          )}
+          {section.description && (
+            <p class="text-base leading-8 text-zinc-600">{section.description}</p>
+          )}
+        </div>
+      )
+    }
+
+    {
+      section.plans.length > 0 && (
+        <div class={gridClass}>
+          {section.plans.map((plan) => {
+            const ctaHref = plan.cta.href ? localizeHref(plan.cta.href, locale) : plan.cta.href;
+            const cardClass = [
+              surfaceClass,
+              'flex h-full flex-col gap-6 p-6 md:p-8',
+              plan.featured &&
+                'border-zinc-950/25 bg-zinc-950 text-stone-50 shadow-lg shadow-zinc-950/10',
+            ];
+            const mutedTextClass = plan.featured ? 'text-stone-300' : 'text-zinc-600';
+            const featureBadgeClass = plan.featured ? 'text-stone-300' : 'text-zinc-500';
+            const featureSurfaceClass = plan.featured
+              ? 'rounded-2xl border border-white/10 bg-white/5'
+              : softSurfaceClass;
+
+            return (
+              <article class:list={cardClass}>
+                <div class="space-y-4">
+                  {(plan.eyebrow || plan.featured) && (
+                    <div class="flex flex-wrap items-center gap-2">
+                      {plan.eyebrow && (
+                        <span class:list={[eyebrowClass, plan.featured && 'text-stone-300']}>
+                          {plan.eyebrow}
+                        </span>
+                      )}
+                      {plan.featured && (
+                        <span class="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-stone-100">
+                          Recommended
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  <div class="space-y-2">
+                    <h3
+                      class:list={[
+                        'text-2xl font-semibold tracking-tight sm:text-3xl',
+                        plan.featured ? 'text-stone-50' : 'text-zinc-950',
+                      ]}>
+                      {plan.title}
+                    </h3>
+                    {plan.description && (
+                      <p class:list={['text-sm leading-7', mutedTextClass]}>{plan.description}</p>
+                    )}
+                  </div>
+
+                  <div class="space-y-1">
+                    <p
+                      class:list={[
+                        'text-4xl font-semibold tracking-tight sm:text-5xl',
+                        plan.featured ? 'text-stone-50' : 'text-zinc-950',
+                      ]}>
+                      {plan.price}
+                    </p>
+                    {plan.billingPeriod && (
+                      <p class:list={['text-sm uppercase tracking-[0.16em]', featureBadgeClass]}>
+                        {plan.billingPeriod}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {plan.features.length > 0 && (
+                  <ul class:list={[featureSurfaceClass, 'grid gap-3 p-4 text-sm leading-7']}>
+                    {plan.features.map((feature) => (
+                      <li class="flex items-start gap-3">
+                        <span
+                          class:list={[
+                            'mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
+                            feature.included
+                              ? plan.featured
+                                ? 'bg-white/10 text-stone-50'
+                                : 'bg-zinc-950 text-stone-50'
+                              : plan.featured
+                                ? 'bg-white/5 text-stone-400'
+                                : 'bg-zinc-200 text-zinc-500',
+                          ]}>
+                          {feature.included ? '✓' : '–'}
+                        </span>
+                        <span
+                          class:list={[
+                            feature.included ? '' : 'line-through opacity-70',
+                            plan.featured ? 'text-stone-200' : 'text-zinc-700',
+                          ]}>
+                          {feature.label}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {plan.cta.label && ctaHref && (
+                  <div class="mt-auto">
+                    <a class={resolveButtonClass(plan.cta.variant)} href={ctaHref}>
+                      {plan.cta.label}
+                    </a>
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      )
+    }
+  </div>
+</section>
